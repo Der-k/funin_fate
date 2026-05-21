@@ -62,28 +62,30 @@ function RestaurantImageCard({
   image: string;
 }) {
   return (
-    <div className="group relative overflow-hidden rounded-[28px]">
-      <div className="relative h-[240px] w-full overflow-hidden rounded-[28px]">
+    <div className="group relative overflow-hidden rounded-[20px] sm:rounded-[28px]">
+      {/* Mobile: shorter cards; desktop: original height */}
+      <div className="relative h-[180px] sm:h-[200px] lg:h-[240px] w-full overflow-hidden rounded-[20px] sm:rounded-[28px]">
         <Image
           src={image}
           alt={title}
           fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="object-cover transition duration-700 group-hover:scale-110"
         />
 
         <div className="absolute inset-0 bg-gradient-to-t from-[#36454F] via-[#36454F]/30 to-transparent" />
 
-        <div className="absolute inset-0 rounded-[28px] ring-1 ring-[#F5DEB3]/10 group-hover:ring-[#CC4125]/40 transition duration-500" />
+        <div className="absolute inset-0 rounded-[20px] sm:rounded-[28px] ring-1 ring-[#F5DEB3]/10 group-hover:ring-[#CC4125]/40 transition duration-500" />
 
-        <div className="absolute bottom-5 left-5">
+        <div className="absolute bottom-4 left-4 sm:bottom-5 sm:left-5">
           <p
-  className={`text-xs uppercase tracking-[0.25em] text-[#20B2AA] ${caveat.className}`}
->
+            className={`text-xs uppercase tracking-[0.25em] text-[#20B2AA] ${caveat.className}`}
+          >
             Dining
           </p>
           <h3
-  className={`mt-1 text-2xl font-black text-[#F5DEB3] ${quicksand.className}`}
->
+            className={`mt-1 text-xl sm:text-2xl font-black text-[#F5DEB3] ${quicksand.className}`}
+          >
             {title}
           </h3>
         </div>
@@ -94,7 +96,7 @@ function RestaurantImageCard({
 
 function FeaturedCard() {
   return (
-    <div className="relative overflow-hidden rounded-[32px] border border-[#F5DEB3]/15 bg-[#36454F]/80 p-8 shadow-2xl backdrop-blur-sm h-full">
+    <div className="relative overflow-hidden rounded-[24px] sm:rounded-[32px] border border-[#F5DEB3]/15 bg-[#36454F]/80 p-6 sm:p-8 shadow-2xl backdrop-blur-sm h-full">
       {/* Teal glow */}
       <div className="absolute -right-20 -top-20 h-56 w-56 rounded-full bg-[#20B2AA]/25 blur-3xl" />
       {/* Burnt red accent glow */}
@@ -102,14 +104,14 @@ function FeaturedCard() {
 
       <div className="relative z-10">
         <p
-  className={`text-xs uppercase tracking-[0.35em] text-[#20B2AA] ${caveat.className}`}
->
+          className={`text-xs uppercase tracking-[0.35em] text-[#20B2AA] ${caveat.className}`}
+        >
           Culinary Experiences
         </p>
 
         <h2
-  className={`mt-4 text-4xl font-black uppercase leading-none text-[#F5DEB3] md:text-5xl ${quicksand.className}`}
->
+          className={`mt-4 text-3xl sm:text-4xl lg:text-5xl font-black uppercase leading-none text-[#F5DEB3] ${quicksand.className}`}
+        >
           Taste The
           <br />
           Future Of
@@ -118,19 +120,19 @@ function FeaturedCard() {
         </h2>
 
         <p
-  className={`mt-5 max-w-md text-sm leading-relaxed text-[#F5DEB3]/70 ${caveat.className}`}
->
+          className={`mt-4 sm:mt-5 max-w-md text-sm leading-relaxed text-[#F5DEB3]/70 ${caveat.className}`}
+        >
           From immersive rooftop lounges to curated chef experiences,
           discover the restaurants, nightlife, and social spaces powering
           the energy of Funinfate.
         </p>
 
-        <div className="mt-6 h-px w-16 bg-gradient-to-r from-[#CC4125] to-transparent" />
+        <div className="mt-5 sm:mt-6 h-px w-16 bg-gradient-to-r from-[#CC4125] to-transparent" />
 
-        <div className="mt-6 flex flex-wrap gap-4">
+        <div className="mt-5 sm:mt-6 flex flex-col xs:flex-row flex-wrap gap-3 sm:gap-4">
           <Link
             href="/restaurants"
-            className={`group inline-flex items-center gap-2 rounded-full bg-[#20B2AA] px-6 py-3 text-sm font-semibold text-[#020817] transition hover:scale-[1.02] hover:bg-[#1a9e97] ${quicksand.className}`}
+            className={`group inline-flex items-center justify-center gap-2 rounded-full bg-[#20B2AA] px-5 sm:px-6 py-2.5 sm:py-3 text-sm font-semibold text-[#020817] transition hover:scale-[1.02] hover:bg-[#1a9e97] ${quicksand.className}`}
           >
             Explore Dining
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -138,7 +140,7 @@ function FeaturedCard() {
 
           <Link
             href="/experience"
-            className={`inline-flex items-center rounded-full border border-[#F5DEB3]/25 px-6 py-3 text-sm font-semibold text-[#F5DEB3] transition hover:bg-[#CC4125] hover:border-[#CC4125] hover:text-white ${quicksand.className}`}
+            className={`inline-flex items-center justify-center rounded-full border border-[#F5DEB3]/25 px-5 sm:px-6 py-2.5 sm:py-3 text-sm font-semibold text-[#F5DEB3] transition hover:bg-[#CC4125] hover:border-[#CC4125] hover:text-white ${quicksand.className}`}
           >
             View Experiences
           </Link>
@@ -150,84 +152,74 @@ function FeaturedCard() {
 
 export default function RestaurantShowcaseSection() {
   return (
-    <section className="relative overflow-hidden px-6 py-24 md:px-10 lg:px-16">
-
-      {/* ── BACKGROUND ── */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-black" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/45 to-black/30" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_35%,rgba(0,0,0,0.55)_100%)]" />
-      </div>
+    <section className="relative overflow-hidden px-4 sm:px-6 py-14 sm:py-20 md:px-10 lg:px-16 bg-white">
 
       {/* CONTENT */}
       <div className="relative z-10 mx-auto max-w-7xl">
 
         {/* Section Heading */}
-        <div className="mb-16 max-w-3xl">
+        <div className="mb-10 sm:mb-16 max-w-3xl">
           <div className="flex items-center gap-3">
             <span className="h-2 w-2 rounded-full bg-[#CC4125]" />
-            <p className="text-sm uppercase tracking-[0.35em] text-[#20B2AA]">
+            <p className={`text-xs sm:text-sm uppercase tracking-[0.25em] sm:tracking-[0.35em] text-[#20B2AA] ${quicksand.className}`}>
               Restaurants & Nightlife
             </p>
           </div>
 
           <h2
-  className={`mt-4 text-5xl font-black uppercase leading-[0.95] text-[#F5DEB3] md:text-7xl ${quicksand.className}`}
->
+            className={`mt-4 text-4xl sm:text-5xl font-black uppercase leading-[0.95] text-[#36454F] md:text-7xl ${quicksand.className}`}
+          >
             Eat, Meet,
             <br />
             Connect.
           </h2>
 
-          <div className="mt-4 h-[3px] w-24 rounded-full bg-gradient-to-r from-[#CC4125] via-[#20B2AA] to-transparent" />
+          <div className="mt-4 h-[3px] w-20 sm:w-24 rounded-full bg-gradient-to-r from-[#CC4125] via-[#20B2AA] to-transparent" />
 
           <p
-  className={`mt-6 text-lg leading-relaxed text-[#F5DEB3]/65 ${caveat.className}`}
->
+            className={`mt-5 sm:mt-6 text-base sm:text-lg leading-relaxed text-[#36454F]/60 ${caveat.className}`}
+          >
             Discover premium dining destinations, social venues,
             networking lounges, and curated culinary experiences
             designed around the energy of Funinfate.
           </p>
         </div>
 
-        {/* 3-Column Layout: images | featured card | images */}
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
+        {/* ── MOBILE: Featured card first, then 2-col image grid ── */}
+        {/* ── DESKTOP: 3-column layout: images | featured | images ── */}
 
-          {/* Left column — 3 stacked images */}
+        {/* Mobile featured card — hidden on lg+ */}
+        <div className="mb-5 lg:hidden">
+          <FeaturedCard />
+        </div>
+
+        {/* Mobile 2-col image grid — hidden on lg+ */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:hidden">
+          {restaurantImages.map((img) => (
+            <RestaurantImageCard key={img.id} title={img.title} image={img.image} />
+          ))}
+        </div>
+
+        {/* Desktop 3-column layout — hidden below lg */}
+        <div className="hidden lg:grid grid-cols-3 gap-5">
+
+          {/* Left column */}
           <div className="flex flex-col gap-5">
-            <RestaurantImageCard
-              title={restaurantImages[0].title}
-              image={restaurantImages[0].image}
-            />
-            <RestaurantImageCard
-              title={restaurantImages[1].title}
-              image={restaurantImages[1].image}
-            />
-            <RestaurantImageCard
-              title={restaurantImages[2].title}
-              image={restaurantImages[2].image}
-            />
+            <RestaurantImageCard title={restaurantImages[0].title} image={restaurantImages[0].image} />
+            <RestaurantImageCard title={restaurantImages[1].title} image={restaurantImages[1].image} />
+            <RestaurantImageCard title={restaurantImages[2].title} image={restaurantImages[2].image} />
           </div>
 
-          {/* Centre — Featured card stretches to match column height */}
+          {/* Centre — Featured card */}
           <div className="flex">
             <FeaturedCard />
           </div>
 
-          {/* Right column — 3 stacked images */}
+          {/* Right column */}
           <div className="flex flex-col gap-5">
-            <RestaurantImageCard
-              title={restaurantImages[3].title}
-              image={restaurantImages[3].image}
-            />
-            <RestaurantImageCard
-              title={restaurantImages[4].title}
-              image={restaurantImages[4].image}
-            />
-            <RestaurantImageCard
-              title={restaurantImages[5].title}
-              image={restaurantImages[5].image}
-            />
+            <RestaurantImageCard title={restaurantImages[3].title} image={restaurantImages[3].image} />
+            <RestaurantImageCard title={restaurantImages[4].title} image={restaurantImages[4].image} />
+            <RestaurantImageCard title={restaurantImages[5].title} image={restaurantImages[5].image} />
           </div>
 
         </div>

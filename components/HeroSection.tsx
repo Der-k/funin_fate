@@ -35,9 +35,34 @@ export default function HeroSection() {
   const [chatOpen, setChatOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
+  // Track dropdown trigger positions for fixed-position menus on mobile
+  const visitorTriggerRef = useRef<HTMLButtonElement>(null);
+  const interestTriggerRef = useRef<HTMLButtonElement>(null);
+  const [visitorRect, setVisitorRect] = useState<DOMRect | null>(null);
+  const [interestRect, setInterestRect] = useState<DOMRect | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
   useEffect(() => {
     setMounted(true);
+    const mq = window.matchMedia("(max-width: 600px)");
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
   }, []);
+
+  // Recalculate trigger rect when a dropdown opens (needed for fixed positioning)
+  useEffect(() => {
+    if (visitorOpen && visitorTriggerRef.current) {
+      setVisitorRect(visitorTriggerRef.current.getBoundingClientRect());
+    }
+  }, [visitorOpen]);
+
+  useEffect(() => {
+    if (interestOpen && interestTriggerRef.current) {
+      setInterestRect(interestTriggerRef.current.getBoundingClientRect());
+    }
+  }, [interestOpen]);
 
   const togglePlay = () => {
     if (!videoRef.current) return;
@@ -54,25 +79,37 @@ export default function HeroSection() {
     setInterestOpen(false);
   };
 
+  // On mobile, render dropdown as a fixed overlay anchored to the trigger
+  const mobileMenuStyle = (rect: DOMRect | null): React.CSSProperties => {
+    if (!rect) return {};
+    return {
+      position: "fixed",
+      top: rect.bottom + 6,
+      left: rect.left,
+      width: rect.width,
+      zIndex: 99999,
+    };
+  };
+
   return (
     <section
       className="hero-section"
       style={{
         position: "relative",
-        zIndex: 10, // must beat sibling sections so dropdowns overlay them
+        zIndex: 10,
         width: "100%",
-        height: "100vh",
-        minHeight: "600px",
+        height: "100dvh", // dvh handles mobile browser chrome correctly
+        minHeight: "560px",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "flex-end",
-        paddingBottom: "80px",
+        paddingBottom: "clamp(56px, 10vh, 80px)",
         fontFamily: "'Anton', 'Impact', sans-serif",
       }}
       onClick={closeAll}
     >
-      {/* ── Google Fonts ── */}
+      {/* ── Styles ── */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
@@ -108,12 +145,13 @@ export default function HeroSection() {
           text-align: center;
           color: #fff;
           font-family: inherit;
-          font-size: clamp(2.6rem, 6vw, 5.2rem);
-          line-height: 1.0;
+          /* Mobile-first: clamp starts at 2rem so it fits at 320px */
+          font-size: clamp(2rem, 8vw, 5.2rem);
+          line-height: 1.05;
           letter-spacing: -0.015em;
-font-weight: 500;
+          font-weight: 500;
           text-transform: none;
-          margin-bottom: clamp(28px, 5vh, 52px);
+          margin-bottom: clamp(20px, 4vh, 52px);
           text-shadow: 0 3px 14px rgba(0,0,0,0.35);
           padding: 0 16px;
           animation: heroFadeUp 0.9s cubic-bezier(.22,.68,0,1.2) both;
@@ -130,15 +168,20 @@ font-weight: 500;
           z-index: 2;
           display: flex;
           align-items: center;
-          gap: 12px;
+          gap: 10px;
           flex-wrap: wrap;
           justify-content: center;
+          width: 100%;
+          padding: 0 16px;
           animation: heroFadeUp 1.1s 0.2s cubic-bezier(.22,.68,0,1.2) both;
         }
 
         /* Dropdown wrapper */
         .hero-dropdown-wrap {
           position: relative;
+          /* On mobile each dropdown takes half the row */
+          flex: 1 1 140px;
+          max-width: 260px;
         }
 
         /* Dropdown trigger */
@@ -152,14 +195,17 @@ font-weight: 500;
           border: 1.5px solid rgba(255,255,255,0.55);
           color: #fff;
           font-family: 'Inter', sans-serif;
-          font-size: 0.95rem;
+          font-size: 0.9rem;
           font-weight: 500;
-          padding: 12px 20px;
+          padding: 12px 14px;
           border-radius: 4px;
           cursor: pointer;
-          min-width: 190px;
+          width: 100%;
           transition: background 0.2s, border-color 0.2s;
           letter-spacing: 0.03em;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
         .hero-dropdown-trigger:hover {
           background: rgba(255,255,255,0.22);
@@ -167,14 +213,14 @@ font-weight: 500;
         }
         .hero-dropdown-trigger .chevron {
           margin-left: auto;
-          transition: transform 0.25s;
           flex-shrink: 0;
+          transition: transform 0.25s;
         }
         .hero-dropdown-trigger.open .chevron {
           transform: rotate(180deg);
         }
 
-        /* Dropdown menu */
+        /* Dropdown menu — default (desktop) is absolute inside wrapper */
         .hero-dropdown-menu {
           position: absolute;
           top: calc(100% + 6px);
@@ -184,16 +230,23 @@ font-weight: 500;
           backdrop-filter: blur(16px);
           border: 1px solid rgba(255,255,255,0.12);
           border-radius: 4px;
-          overflow: visible;
+          overflow: hidden;
           z-index: 9999;
           animation: dropdownIn 0.2s ease both;
+        }
+        /* Mobile override: position is set inline via JS (fixed), reset absolute props */
+        .hero-dropdown-menu.mobile-fixed {
+          position: fixed;
+          top: unset;
+          left: unset;
+          right: unset;
         }
         @keyframes dropdownIn {
           from { opacity: 0; transform: translateY(-6px); }
           to   { opacity: 1; transform: translateY(0); }
         }
         .hero-dropdown-item {
-          padding: 11px 20px;
+          padding: 11px 18px;
           color: rgba(255,255,255,0.85);
           font-family: 'Inter', sans-serif;
           font-size: 0.9rem;
@@ -214,15 +267,18 @@ font-weight: 500;
           background: #fff;
           color: #111;
           font-family: 'Inter', sans-serif;
-          font-size: 0.95rem;
+          font-size: 0.9rem;
           font-weight: 700;
-          padding: 13px 32px;
+          padding: 13px 28px;
           border: none;
           border-radius: 4px;
           cursor: pointer;
           letter-spacing: 0.05em;
           text-transform: uppercase;
           transition: background 0.2s, transform 0.15s;
+          /* On mobile: full-width row below the two dropdowns */
+          flex: 0 0 auto;
+          white-space: nowrap;
         }
         .hero-explore-btn:hover {
           background: #f0f0f0;
@@ -235,11 +291,11 @@ font-weight: 500;
         /* Pause / Play button */
         .hero-pause-btn {
           position: absolute;
-          bottom: 24px;
-          right: 24px;
+          bottom: 20px;
+          left: 20px;         /* moved to left so it never collides with chat */
           z-index: 4;
-          width: 38px;
-          height: 38px;
+          width: 36px;
+          height: 36px;
           border-radius: 50%;
           background: rgba(0,0,0,0.45);
           border: 2px solid rgba(255,255,255,0.7);
@@ -257,8 +313,8 @@ font-weight: 500;
         /* AI Chat bubble */
         .hero-chat-bubble {
           position: absolute;
-          bottom: 24px;
-          right: 72px;
+          bottom: 20px;
+          right: 20px;
           z-index: 4;
           display: flex;
           align-items: flex-end;
@@ -269,11 +325,11 @@ font-weight: 500;
           background: #fff;
           color: #111;
           font-family: 'Inter', sans-serif;
-          font-size: 0.8rem;
+          font-size: 0.78rem;
           font-weight: 500;
-          padding: 10px 14px;
+          padding: 10px 28px 10px 12px;
           border-radius: 10px 10px 0 10px;
-          max-width: 210px;
+          max-width: 190px;
           line-height: 1.45;
           box-shadow: 0 4px 20px rgba(0,0,0,0.25);
           position: relative;
@@ -302,9 +358,46 @@ font-weight: 500;
           transition: transform 0.2s;
         }
         .hero-chat-icon-btn:hover { transform: scale(1.08); }
+
+        /* ── Mobile breakpoint ── */
+        @media (max-width: 600px) {
+          .hero-controls {
+            gap: 8px;
+          }
+
+          /* Two dropdowns side-by-side, then Explore full-width below */
+          .hero-dropdown-wrap {
+            flex: 1 1 calc(50% - 8px);
+            max-width: calc(50% - 4px);
+          }
+
+          .hero-explore-btn {
+            flex: 1 1 100%;   /* full-width third row */
+            width: 100%;
+            max-width: 100%;
+            padding: 13px 0;
+          }
+
+          /* Slightly smaller trigger text so labels fit at 160px wide */
+          .hero-dropdown-trigger {
+            font-size: 0.8rem;
+            padding: 11px 10px;
+          }
+        }
+
+        /* Very small phones */
+        @media (max-width: 380px) {
+          .hero-headline {
+            font-size: clamp(1.75rem, 9vw, 2.4rem);
+          }
+          .hero-chat-tooltip {
+            max-width: 160px;
+            font-size: 0.73rem;
+          }
+        }
       `}</style>
 
-      {/* ── Video + overlay in their own clip box (overflow:hidden here, NOT on the section) ── */}
+      {/* ── Video + overlay ── */}
       <div style={{ position: "absolute", inset: 0, overflow: "hidden", zIndex: 0 }}>
         <video
           ref={videoRef}
@@ -330,9 +423,11 @@ font-weight: 500;
       {/* ── Filter Controls ── */}
       {mounted && (
         <div className="hero-controls" onClick={(e) => e.stopPropagation()}>
+
           {/* Visitor type dropdown */}
           <div className="hero-dropdown-wrap">
             <button
+              ref={visitorTriggerRef}
               className={`hero-dropdown-trigger ${visitorOpen ? "open" : ""} ${quicksand.className}`}
               onClick={() => {
                 setVisitorOpen((v) => !v);
@@ -343,7 +438,10 @@ font-weight: 500;
               <ChevronDown size={16} className="chevron" />
             </button>
             {visitorOpen && (
-              <div className="hero-dropdown-menu">
+              <div
+                className={`hero-dropdown-menu${isMobile ? " mobile-fixed" : ""}`}
+                style={isMobile ? mobileMenuStyle(visitorRect) : undefined}
+              >
                 {DROPDOWNS.visitor.options.map((opt) => (
                   <div
                     key={opt}
@@ -363,6 +461,7 @@ font-weight: 500;
           {/* Interest dropdown */}
           <div className="hero-dropdown-wrap">
             <button
+              ref={interestTriggerRef}
               className={`hero-dropdown-trigger ${interestOpen ? "open" : ""} ${quicksand.className}`}
               onClick={() => {
                 setInterestOpen((v) => !v);
@@ -373,7 +472,10 @@ font-weight: 500;
               <ChevronDown size={16} className="chevron" />
             </button>
             {interestOpen && (
-              <div className="hero-dropdown-menu">
+              <div
+                className={`hero-dropdown-menu${isMobile ? " mobile-fixed" : ""}`}
+                style={isMobile ? mobileMenuStyle(interestRect) : undefined}
+              >
                 {DROPDOWNS.interest.options.map((opt) => (
                   <div
                     key={opt}
@@ -392,12 +494,12 @@ font-weight: 500;
 
           {/* Explore CTA */}
           <button className={`hero-explore-btn ${quicksand.className}`}>
-  Explore
-</button>
+            Explore
+          </button>
         </div>
       )}
 
-      {/* ── Pause / Play toggle ── */}
+      {/* ── Pause / Play toggle — moved to bottom-LEFT so it never overlaps chat ── */}
       <button
         className="hero-pause-btn"
         onClick={togglePlay}
@@ -406,7 +508,7 @@ font-weight: 500;
         {playing ? <Pause size={16} /> : <Play size={16} />}
       </button>
 
-      {/* ── AI Chat bubble ── */}
+      {/* ── AI Chat bubble — bottom-RIGHT ── */}
       {mounted && chatOpen && (
         <div className="hero-chat-bubble">
           <div className={`hero-chat-tooltip ${caveat.className}`}>
@@ -427,10 +529,7 @@ font-weight: 500;
       )}
 
       {mounted && !chatOpen && (
-        <div
-          className="hero-chat-bubble"
-          style={{ right: "72px", bottom: "24px" }}
-        >
+        <div className="hero-chat-bubble">
           <button
             className="hero-chat-icon-btn"
             aria-label="Open AI assistant"

@@ -63,7 +63,7 @@ export default function FateNewsSection() {
   }, []);
 
   return (
-    <section className="relative w-full h-[760px] overflow-hidden bg-[#36454F]">
+   <section className="relative w-full h-[500px] md:h-[760px] overflow-hidden bg-[#36454F]">
 
       {/* Background Images */}
       <AnimatePresence mode="wait">
@@ -101,7 +101,20 @@ export default function FateNewsSection() {
       <div className="absolute bottom-20 left-20 w-20 h-20 border border-white/10 rounded-full z-10" />
 
       {/* Content */}
-      <div className="relative z-20 flex items-end h-full px-6 md:px-20 pb-16">
+    <div
+  className="
+    relative z-20
+    flex items-end
+    h-full
+
+    px-4
+    sm:px-6
+    md:px-20
+
+    pb-24
+    md:pb-16
+  "
+>
 
         <AnimatePresence mode="wait">
           <motion.div
@@ -110,14 +123,25 @@ export default function FateNewsSection() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 30 }}
             transition={{ duration: 0.7 }}
-            className="
-              relative overflow-hidden
-              bg-[#F5DEB3]/95 backdrop-blur-xl
-              w-full max-w-[520px]
-              shadow-[0_35px_120px_rgba(0,0,0,0.35)]
-              rounded-[28px]
-              border border-white/20
-            "
+           className="
+  relative overflow-hidden
+
+  bg-[#F5DEB3]/90
+  backdrop-blur-xl
+
+  w-[78%]
+  max-w-[280px]
+
+  md:w-full
+  md:max-w-[520px]
+
+  rounded-[18px]
+  md:rounded-[28px]
+
+  border border-white/15
+
+  shadow-[0_10px_40px_rgba(0,0,0,0.22)]
+"
           >
 
             {/* Top splash accent */}
@@ -133,17 +157,17 @@ export default function FateNewsSection() {
             <div className="absolute -top-16 -right-10 w-40 h-40 bg-[#20B2AA]/20 blur-3xl rounded-full" />
             <div className="absolute -bottom-16 -left-10 w-40 h-40 bg-[#CC4125]/20 blur-3xl rounded-full" />
 
-            <div className="relative p-8 md:p-10">
+            <div className="relative p-3 md:p-10">
 
               {/* Category pill */}
-              <div className="mb-6">
+              <div className="mb-3 md:mb-6">
                 <span
                   className={`
                     inline-flex items-center
                     px-4 py-2 rounded-full
                     bg-white/80 backdrop-blur-md
                     text-[#36454F]
-                    text-sm tracking-wide font-bold
+                    text-[10px] md:text-sm tracking-wide font-bold
                     shadow-md
                     ${caveat.className}
                   `}
@@ -152,17 +176,17 @@ export default function FateNewsSection() {
                 </span>
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-2 md:space-y-6">
 
                 {/* Eyebrow */}
                 <p
-                  className={`text-[#CC4125] text-3xl font-bold ${caveat.className}`}
+                  className={`text-[#CC4125] text-2xl md:text-lg md:text-3xl font-bold ${caveat.className}`}
                 >
                   {newsSlides[current].eyebrow}
                 </p>
 
                 {/* Heading */}
-                <h2 className="text-[#36454F] text-3xl md:text-[3rem] font-black uppercase leading-[0.92] tracking-tight">
+                <h2 className="text-[#36454F] text-[1.55rem] sm:text-lg md:text-3xl md:text-[3rem] font-black uppercase leading-[0.95] tracking-tight">
                   {newsSlides[current].title}
                 </h2>
 
@@ -171,8 +195,8 @@ export default function FateNewsSection() {
 
                 {/* Description */}
                 <p
-                  className={`text-[#36454F]/80 text-xl md:text-2xl leading-relaxed ${caveat.className}`}
-                >
+  className={`text-[#36454F]/80 text-[0.82rem] leading-snug md:text-2xl md:leading-relaxed leading-relaxed ${caveat.className}`}
+>
                   {newsSlides[current].description}
                 </p>
 
@@ -181,9 +205,9 @@ export default function FateNewsSection() {
                   href={newsSlides[current].href}
                   className="
                     group inline-flex items-center justify-center gap-3
-                    w-full h-14
+                    w-full h-10 md:h-14
                     bg-[#36454F] text-[#F5DEB3]
-                    uppercase tracking-[0.18em] text-sm font-semibold
+                    uppercase tracking-[0.18em] text-[10px] md:text-sm font-semibold
                     rounded-xl
                     hover:bg-[#20B2AA]
                     transition-all duration-300
@@ -201,7 +225,7 @@ export default function FateNewsSection() {
       </div>
 
       {/* Navigation Dots */}
-      <div className="absolute bottom-8 right-8 z-30 flex items-center gap-3">
+      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:bottom-8 md:right-8 z-30 flex items-center gap-3">
         {newsSlides.map((slide, index) => (
           <button
             key={slide.id}
