@@ -288,3 +288,9 @@ body {
   pathLength: 1;
   animation: sketch-draw 0.9s ease-out forwards;
 }
+
+.app-root-scale {
+  transform: scale(0.67);
+  transform-origin: top left;
+  width: 149.25%;
+}

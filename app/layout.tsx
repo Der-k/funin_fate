@@ -19,9 +19,9 @@ const caveat = Caveat({
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body
@@ -32,7 +32,9 @@ export default function RootLayout({
           antialiased
         `}
       >
-        {children}
+        <div className="app-root-scale">
+          {children}
+        </div>
       </body>
     </html>
   );
