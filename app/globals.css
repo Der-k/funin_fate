@@ -1,26 +1,290 @@
 @import "tailwindcss";
 
+/* =========================
+   FATE DESIGN SYSTEM
+========================= */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Core palette */
+  --sea-green: #20b2aa;
+  --burnt-tangerine: #cc4125;
+  --wheat: #f5deb3;
+  --charcoal-blue: #36454f;
+
+  /* Semantic colors */
+  --background: #f5deb3;
+  --foreground: #36454f;
+
+  --card: #ffffff;
+  --card-foreground: #36454f;
+
+  --primary: #20b2aa;
+  --secondary: #cc4125;
+
+  --muted: #e7d4ac;
+  --muted-foreground: #5d6b73;
+
+  --border: rgba(54, 69, 79, 0.14);
+
+  --overlay-dark: rgba(54, 69, 79, 0.72);
+  --overlay-light: rgba(245, 222, 179, 0.1);
+
+  /* Hero sketch-frame stroke colors */
+  --frame-dark:  rgba(255, 255, 255, 0.88);
+  --frame-green: #7fffd4;
+  --frame-blue:  #afc7d5;
+  --frame-amber: #ffb38a;
+
+  /* Hand-drawn typography scale */
+  --sketch-xs:   0.85rem;
+  --sketch-sm:   1rem;
+  --sketch-base: 1.15rem;
+  --sketch-lg:   1.4rem;
+  --sketch-xl:   1.85rem;
+  --sketch-2xl:  2.5rem;
+  --sketch-3xl:  3.5rem;
+  --sketch-4xl:  4.5rem;
+
+  /* Shared spacing */
+  --section-px: clamp(1.5rem, 4vw, 3rem);
+  --section-py: 2.5rem;
 }
 
+/* Tailwind v4 theme mapping */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-border: var(--border);
+
+  --color-sea-green: var(--sea-green);
+  --color-burnt-tangerine: var(--burnt-tangerine);
+  --color-wheat: var(--wheat);
+  --color-charcoal-blue: var(--charcoal-blue);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-sketch: var(--font-caveat);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* =========================
+   BASE STYLES
+========================= */
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--sea-green);
+  color: white;
+}
+
+/* =========================
+   HAND-DRAWN UTILITIES
+========================= */
+
+/* Apply to any section that uses the sketch system */
+.sketch-section {
+  padding: var(--section-py) var(--section-px);
+  overflow: hidden;
+}
+
+/* Large display heading */
+.sketch-heading {
+  font-family: var(--font-caveat), cursive;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+}
+
+/* Body / label text in sketch style */
+.sketch-text {
+  font-family: var(--font-caveat), cursive;
+  font-weight: 400;
+  color: var(--muted-foreground);
+}
+
+/* Small caps label — category tags, eyebrows */
+.sketch-label {
+  font-family: var(--font-caveat), cursive;
+  font-weight: 600;
+  font-size: var(--sketch-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+/* Ghost / outline button */
+.sketch-btn-outline {
+  font-family: var(--font-caveat), cursive;
+  font-weight: 700;
+  font-size: var(--sketch-sm);
+  letter-spacing: 0.06em;
+  padding: 0.55rem 1.2rem;
+  border: 1.5px solid currentColor;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.sketch-btn-outline:hover {
+  background: var(--foreground);
+  color: var(--background);
+  border-color: var(--foreground);
+}
+
+/* Solid button */
+.sketch-btn-solid {
+  font-family: var(--font-caveat), cursive;
+  font-weight: 700;
+  font-size: var(--sketch-sm);
+  letter-spacing: 0.06em;
+  padding: 0.55rem 1.2rem;
+  background: var(--foreground);
+  color: var(--background);
+  border: 1.5px solid var(--foreground);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.sketch-btn-solid:hover {
+  background: transparent;
+  color: var(--foreground);
+}
+
+/* Category / tab pill — inactive */
+.sketch-tab {
+  font-family: var(--font-caveat), cursive;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.06em;
+  padding: 0.35rem 1rem;
+  color: var(--foreground);
+  opacity: 0.4;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  transition: opacity 0.2s;
+}
+.sketch-tab:hover {
+  opacity: 1;
+}
+
+/* Active tab — text only; the SVG sketch-box is overlaid via React */
+.sketch-tab-active {
+  opacity: 1;
+  color: var(--foreground);
+}
+
+/* Divider line — rough horizontal rule */
+.sketch-divider {
+  border: none;
+  border-top: 1.5px solid var(--border);
+  margin: 0;
+}
+
+/* Dark surface variant (used inside dark sections) */
+.sketch-surface-dark {
+  background: var(--charcoal-blue);
+  color: var(--wheat);
+}
+
+/* Text-outline utility */
+.text-outline {
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
+}
+
+/* =========================
+   SKETCH SVG ANIMATIONS
+========================= */
+
+/* Eyebrow row — sketch line + label */
+.sketch-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.75rem;
+}
+
+.sketch-eyebrow-label {
+  font-family: var(--font-caveat), cursive;
+  font-weight: 600;
+  font-size: var(--sketch-xs);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+/* Stats bar — shared across sections */
+.sketch-stats-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  backdrop-filter: blur(12px);
+  background: rgba(36, 45, 50, 0.92);
+  border-top: 1px solid rgba(245, 222, 179, 0.1);
+}
+
+.sketch-stats-number {
+  font-family: var(--font-caveat), cursive;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--wheat);
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
+  margin-bottom: 0.25rem;
+}
+
+.sketch-stats-label {
+  font-family: var(--font-caveat), cursive;
+  font-weight: 600;
+  font-size: var(--sketch-sm);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Hero sketch frame wrapper — mirrors -top-[30vh] -bottom-[30vh] left-0 w-[220px] */
+.sketch-frame-wrap {
+  position: absolute;
+  top: -30vh;
+  bottom: -30vh;
+  left: 0;
+  width: 220px;
+  pointer-events: none;
+}
+
+.sketch-frame-wrap svg {
+  width: 100%;
+  height: 100%;
+}
+@keyframes sketch-draw {
+  from { stroke-dashoffset: 1; }
+  to   { stroke-dashoffset: 0; }
+}
+
+.sketch-path-animate {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  pathLength: 1;
+  animation: sketch-draw 0.9s ease-out forwards;
 }
