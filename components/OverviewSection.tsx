@@ -96,7 +96,7 @@ export default function OverviewSection() {
 >
               Explore
               <br />
-              The Experience
+              Fate
             </h2>
 
            <p className={`text-[#4a4a4a] text-xl md:text-[1.9rem] leading-relaxed max-w-2xl mb-12 ${caveat.className}`}>
