@@ -1,0 +1,8 @@
+{
+  "name": "funinfate-web",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-05-23",
+  "assets": {
+    "directory": ".open-next/assets"
+  }
+}
