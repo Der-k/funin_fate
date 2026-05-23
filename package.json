@@ -2,14 +2,14 @@
   "name": "funinfate-web",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "cf:build": "opennextjs-cloudflare build",
-    "preview": "opennextjs-cloudflare preview",
-    "start": "next start",
-    "lint": "next lint"
-  },
+"scripts": {
+  "dev": "next dev",
+  "build": "next build",
+  "cf:build": "opennextjs-cloudflare build",
+  "preview": "opennextjs-cloudflare preview",
+  "start": "next start",
+  "lint": "next lint"
+},
  "dependencies": {
     "@opennextjs/cloudflare": "^1.19.11",
     "framer-motion": "^12.40.0",
