@@ -289,8 +289,16 @@ body {
   animation: sketch-draw 0.9s ease-out forwards;
 }
 
-.app-root-scale {
-  transform: scale(0.67);
-  transform-origin: top left;
-  width: 149.25%;
+html {
+  font-size: 67%;          /* 67% of 16px = ~10.7px base, same visual effect */
+  scroll-behavior: smooth;
+}
+
+@keyframes slowZoom {
+  from {
+    transform: scale(1) translateY(0px);
+  }
+  to {
+    transform: scale(1.08) translateY(-8px);
+  }
 }

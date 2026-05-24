@@ -98,13 +98,13 @@ export default function HeroSection() {
         position: "relative",
         zIndex: 10,
         width: "100%",
-        height: "100dvh", // dvh handles mobile browser chrome correctly
-        minHeight: "560px",
+       height: "100svh",      // keeps full viewport height
+minHeight: "680px",    // larger floor for small/landscape screens
+paddingBottom: "clamp(72px, 12vh, 100px)",  // more breathing room at bottom
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "flex-end",
-        paddingBottom: "clamp(56px, 10vh, 80px)",
         fontFamily: "'Anton', 'Impact', sans-serif",
       }}
       onClick={closeAll}
@@ -151,7 +151,7 @@ export default function HeroSection() {
           letter-spacing: -0.015em;
           font-weight: 500;
           text-transform: none;
-          margin-bottom: clamp(20px, 4vh, 52px);
+          margin-bottom: clamp(28px, 5vh, 64px);
           text-shadow: 0 3px 14px rgba(0,0,0,0.35);
           padding: 0 16px;
           animation: heroFadeUp 0.9s cubic-bezier(.22,.68,0,1.2) both;

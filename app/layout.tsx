@@ -32,9 +32,9 @@ export default function RootLayout({
           antialiased
         `}
       >
-        <div className="app-root-scale">
+      
           {children}
-        </div>
+      
       </body>
     </html>
   );
