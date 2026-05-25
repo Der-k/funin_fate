@@ -2,776 +2,500 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useRef, useCallback } from "react";
-import { ArrowRight } from "lucide-react";
-import { Caveat, Quicksand } from "next/font/google";
+import { useState } from "react";
+import { ArrowUpRight } from "lucide-react";
+import { DM_Serif_Display, DM_Sans } from "next/font/google";
 
-const caveat = Caveat({ subsets: ["latin"], weight: ["400", "600", "700"] });
-const quicksand = Quicksand({ subsets: ["latin"], weight: ["300", "400", "600", "700"] });
+const serif = DM_Serif_Display({ subsets: ["latin"], weight: ["400"], style: ["normal", "italic"] });
+const sans  = DM_Sans({ subsets: ["latin"], weight: ["300", "400", "500", "600"] });
 
-// Physical easing curves as constants for reuse
-const EASE_OUT_EXPO   = "cubic-bezier(.16,1,.3,1)";    // fast start → gentle settle
-const EASE_OUT_QUINT  = "cubic-bezier(.22,1,.36,1)";   // snappy, smooth landing
-const EASE_OUT_BACK   = "cubic-bezier(.34,1.56,.64,1)"; // slight overshoot — tactile
-const EASE_IN_OUT_CIRC = "cubic-bezier(.85,0,.15,1)";  // slow-slow — for ambient fades
+// ─── Data ────────────────────────────────────────────────────────────────────
 
 const categories = [
   {
     title: "Top Experiences",
     tag: "Must-Do",
+    number: "01",
     description: "Immersive adventures and curated experiences shaping the identity of the city.",
     href: "/experiences",
     image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1600&auto=format&fit=crop",
-    accent: "#20B2AA",
   },
   {
     title: "Culture & Community",
     tag: "Local Life",
+    number: "02",
     description: "Meet creators, innovators, and communities driving the cultural pulse of Fate.",
     href: "/community",
     image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1600&auto=format&fit=crop",
-    accent: "#CC4125",
   },
   {
     title: "Weekend Energy",
     tag: "Events",
+    number: "03",
     description: "Events, nightlife, and weekend discoveries across the city.",
     href: "/events",
     image: "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?q=80&w=1600&auto=format&fit=crop",
-    accent: "#F5DEB3",
   },
   {
     title: "Food & Drink",
     tag: "Dining",
+    number: "04",
     description: "Hidden kitchens, rooftop bars, and the flavors that define Fate's palate.",
     href: "/dining",
     image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=1600&auto=format&fit=crop",
-    accent: "#E8A87C",
   },
   {
     title: "Art & Design",
     tag: "Creative",
+    number: "05",
     description: "Galleries, murals, studios, and the makers reshaping Fate's visual language.",
     href: "/art",
     image: "https://images.unsplash.com/photo-1531058020387-3be344556be6?q=80&w=1600&auto=format&fit=crop",
-    accent: "#B39DDB",
   },
   {
     title: "Outdoors & Nature",
     tag: "Escape",
+    number: "06",
     description: "Parks, trails, and green spaces where the city breathes and slows down.",
     href: "/outdoors",
     image: "https://images.unsplash.com/photo-1501854140801-50d01698950b?q=80&w=1600&auto=format&fit=crop",
-    accent: "#66BB6A",
   },
 ];
 
-// Build a CSS transition string with physical easing
-function phys(
-  properties: string[],
-  duration: string,
-  easing: string,
-  delay = "0ms"
-) {
-  return properties
-    .map((p) => `${p} ${duration} ${easing} ${delay}`)
-    .join(", ");
-}
+const GOLD = "#C8A97E";
+const CREAM = "#F5EDE0";
 
-export default function DiscoverFateSection() {
-  const [active, setActive] = useState(0);
-  const [prev, setPrev]     = useState<number | null>(null);
-  const activeCategory = categories[active];
+// ─── Image Card Row ──────────────────────────────────────────────────────────
 
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const heroRef  = useRef<HTMLDivElement | null>(null);
-
-  // ── Card: 3-D tilt on mouse-move ──────────────────────────────────
-  const handleCardMouseMove = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>, i: number) => {
-      const el = cardRefs.current[i];
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const cx = rect.width  / 2;
-      const cy = rect.height / 2;
-      const rotX = ((y - cy) / cy) * -5;
-      const rotY = ((x - cx) / cx) * 7;
-      const tx   = i === active ? "-4px" : "0px";
-      el.style.transform  = `perspective(700px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateX(${tx}) scale(1.02)`;
-      // Ultra-tight tracking curve while moving — feels stuck to cursor
-      el.style.transition = phys(["transform"], "80ms", EASE_OUT_EXPO);
-    },
-    [active]
-  );
-
-  const handleCardMouseLeave = useCallback(
-    (i: number) => {
-      const el = cardRefs.current[i];
-      if (!el) return;
-      el.style.transform = i === active ? "translateX(-4px)" : "none";
-      // Springy settle on leave
-      el.style.transition = phys(["transform"], "600ms", EASE_OUT_BACK);
-    },
-    [active]
-  );
-
-  // ── Hero: parallax tilt ───────────────────────────────────────────
-  const handleHeroMouseMove = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      const el = heroRef.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width  - 0.5;
-      const y = (e.clientY - rect.top)  / rect.height - 0.5;
-      const rotX = y * -4;
-      const rotY = x *  5;
-      el.style.transform  = `perspective(1200px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-28px)`;
-      el.style.transition = phys(["transform"], "120ms", EASE_OUT_EXPO);
-    },
-    []
-  );
-
-  const handleHeroMouseLeave = useCallback(() => {
-    const el = heroRef.current;
-    if (!el) return;
-    el.style.transform  = "translateY(-28px)";
-    el.style.transition = phys(["transform"], "800ms", EASE_OUT_QUINT);
-  }, []);
-
-  // ── Active card selection ─────────────────────────────────────────
-  const handleCardEnter = useCallback(
-    (i: number) => {
-      setPrev(active);
-      setActive(i);
-    },
-    [active]
-  );
-
+function CategoryCard({
+  cat,
+  isActive,
+  onEnter,
+  onLeave,
+}: {
+  cat: (typeof categories)[0];
+  isActive: boolean;
+  onEnter: () => void;
+  onLeave: () => void;
+}) {
   return (
-    <section
-      className="relative pt-24 pb-36 overflow-hidden"
-      style={{ backgroundColor: "#0d1418" }}
+    <Link
+      href={cat.href}
+      onMouseEnter={onEnter}
+      onMouseLeave={onLeave}
+      className="group relative flex items-end overflow-hidden"
+      style={{
+        height: isActive ? "280px" : "120px",
+        transition: "height 600ms cubic-bezier(.16,1,.3,1)",
+        flexShrink: 0,
+      }}
     >
-
-      {/* ── BACKGROUND LAYERS ──────────────────────────────────────── */}
-
-      {/* Layer 1 — deep base */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: "linear-gradient(160deg, #0d1418 0%, #111c22 50%, #0a1218 100%)",
-        }}
-      />
-
-      {/* Layer 2 — per-category reactive gradient
-          Uses EASE_IN_OUT_CIRC for slow, cinematic cross-fades */}
-      {categories.map((cat, i) => (
-        <div
-          key={cat.accent}
-          className="absolute inset-0 pointer-events-none"
+      {/* Background image */}
+      <div className="absolute inset-0">
+        <Image
+          src={cat.image}
+          alt={cat.title}
+          fill
+          className="object-cover"
           style={{
-            opacity: i === active ? 1 : 0,
-            background: `
-              radial-gradient(ellipse at top left,    ${cat.accent}40 0%,  transparent 45%),
-              radial-gradient(ellipse at bottom right, ${cat.accent}28 0%, transparent 50%),
-              radial-gradient(ellipse at 60% 20%,     ${cat.accent}18 0%, transparent 40%)
-            `,
-            // Stagger: outgoing fades fast, incoming blooms slowly
-            transition: i === active
-              ? `opacity 900ms ${EASE_IN_OUT_CIRC}`
-              : `opacity 500ms ${EASE_OUT_QUINT}`,
+            transform: isActive ? "scale(1.04)" : "scale(1.08)",
+            filter: isActive ? "brightness(0.75)" : "brightness(0.9)",
+            transition: "transform 700ms cubic-bezier(.16,1,.3,1), filter 500ms ease",
           }}
         />
-      ))}
-
-      {/* Layer 3 — dark mid veil */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "linear-gradient(to bottom, rgba(10,18,22,0.45) 0%, rgba(10,18,22,0.2) 50%, rgba(10,18,22,0.55) 100%)",
-        }}
-      />
-
-      {/* Layer 4 — large accent glow orbs
-          Each orb gets a different delay → they don't all move in lock-step */}
-      <div
-        className="absolute top-[-80px] left-[-80px] w-[650px] h-[650px] blur-[120px] rounded-full pointer-events-none"
-        style={{
-          backgroundColor: activeCategory.accent + "30",
-          zIndex: 1,
-          transition: phys(
-            ["background-color", "opacity"],
-            "1100ms",
-            EASE_IN_OUT_CIRC,
-            "0ms"
-          ),
-        }}
-      />
-      <div
-        className="absolute bottom-[-100px] right-[-80px] w-[550px] h-[550px] blur-[100px] rounded-full pointer-events-none"
-        style={{
-          backgroundColor: activeCategory.accent + "22",
-          zIndex: 1,
-          transition: phys(
-            ["background-color"],
-            "1300ms",
-            EASE_IN_OUT_CIRC,
-            "80ms"  // ← stagger: trails the first orb
-          ),
-        }}
-      />
-      <div
-        className="absolute top-[35%] left-[25%] w-[500px] h-[500px] blur-[90px] rounded-full pointer-events-none"
-        style={{
-          backgroundColor: activeCategory.accent + "18",
-          zIndex: 1,
-          transition: phys(
-            ["background-color"],
-            "1500ms",
-            EASE_IN_OUT_CIRC,
-            "160ms" // ← stagger: breathes last
-          ),
-        }}
-      />
-
-      {/* Noise / grain texture */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage: "url('/noise.png')",
-          opacity: 0.045,
-          mixBlendMode: "soft-light",
-          zIndex: 2,
-        }}
-      />
-
-      {/* Vignette */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%)",
-          zIndex: 2,
-        }}
-      />
-
-      {/* ── FOREGROUND ATMOSPHERE ─────────────────────────────────── */}
-
-      {/* Floating lines */}
-      <div className="absolute top-[12%] left-[38%] w-40 h-px bg-white/[0.06] rotate-[14deg] pointer-events-none" style={{ zIndex: 3 }} />
-      <div className="absolute top-[18%] left-[42%] w-24 h-px bg-white/[0.04] rotate-[14deg] pointer-events-none" style={{ zIndex: 3 }} />
-      <div className="absolute top-[72%] right-[34%] w-56 h-px bg-white/[0.05] rotate-[-8deg] pointer-events-none" style={{ zIndex: 3 }} />
-      <div className="absolute top-[80%] right-[38%] w-16 h-px bg-white/[0.03] rotate-[-8deg] pointer-events-none" style={{ zIndex: 3 }} />
-      <div className="absolute top-[45%] left-[8%] w-20 h-px bg-white/[0.04] rotate-[75deg] pointer-events-none" style={{ zIndex: 3 }} />
-      <div className="absolute top-[30%] right-[6%] w-12 h-px bg-white/[0.05] rotate-[60deg] pointer-events-none" style={{ zIndex: 3 }} />
-
-      {/* Small blurred foreground orbs — each staggered delay */}
-      <div
-        className="absolute w-[180px] h-[180px] rounded-full blur-2xl pointer-events-none"
-        style={{
-          top: "8%", left: "55%",
-          backgroundColor: activeCategory.accent + "18",
-          zIndex: 3,
-          transition: phys(["background-color"], "1000ms", EASE_IN_OUT_CIRC, "0ms"),
-        }}
-      />
-      <div
-        className="absolute w-[80px] h-[80px] rounded-full blur-xl pointer-events-none"
-        style={{
-          top: "55%", left: "4%",
-          backgroundColor: activeCategory.accent + "22",
-          zIndex: 3,
-          transition: phys(["background-color"], "1000ms", EASE_IN_OUT_CIRC, "120ms"),
-        }}
-      />
-      <div
-        className="absolute w-[120px] h-[120px] rounded-full blur-2xl pointer-events-none"
-        style={{
-          bottom: "12%", right: "28%",
-          backgroundColor: activeCategory.accent + "15",
-          zIndex: 3,
-          transition: phys(["background-color"], "1000ms", EASE_IN_OUT_CIRC, "240ms"),
-        }}
-      />
-
-      {/* Particles */}
-      <div className="absolute w-1 h-1 rounded-full bg-white/20 pointer-events-none" style={{ top: "22%", left: "31%", zIndex: 3 }} />
-      <div className="absolute w-[3px] h-[3px] rounded-full bg-white/10 pointer-events-none" style={{ top: "34%", left: "62%", zIndex: 3 }} />
-      <div className="absolute w-1 h-1 rounded-full bg-white/15 pointer-events-none" style={{ top: "60%", left: "18%", zIndex: 3 }} />
-      <div className="absolute w-[3px] h-[3px] rounded-full bg-white/10 pointer-events-none" style={{ top: "15%", right: "22%", zIndex: 3 }} />
-      <div
-        className="absolute w-1.5 h-1.5 rounded-full pointer-events-none"
-        style={{
-          top: "42%", right: "18%",
-          backgroundColor: activeCategory.accent + "88",
-          zIndex: 3,
-          transition: phys(["background-color"], "700ms", EASE_OUT_QUINT, "60ms"),
-        }}
-      />
-      <div
-        className="absolute w-1 h-1 rounded-full pointer-events-none"
-        style={{
-          top: "68%", left: "46%",
-          backgroundColor: activeCategory.accent + "66",
-          zIndex: 3,
-          transition: phys(["background-color"], "700ms", EASE_OUT_QUINT, "100ms"),
-        }}
-      />
-
-      {/* Rings */}
-      <div
-        className="absolute rounded-full pointer-events-none"
-        style={{
-          width: 220, height: 220,
-          top: "5%", right: "12%",
-          border: "1px solid rgba(255,255,255,0.04)",
-          zIndex: 3,
-        }}
-      />
-      <div
-        className="absolute rounded-full pointer-events-none"
-        style={{
-          width: 140, height: 140,
-          top: "8%", right: "15.5%",
-          border: "1px solid rgba(255,255,255,0.03)",
-          zIndex: 3,
-        }}
-      />
-      <div
-        className="absolute rounded-full pointer-events-none"
-        style={{
-          width: 80, height: 80,
-          bottom: "18%", left: "10%",
-          border: `1px solid ${activeCategory.accent}33`,
-          zIndex: 3,
-          transition: phys(["border-color"], "800ms", EASE_OUT_QUINT),
-        }}
-      />
-
-      {/* Editorial vertical number */}
-      <p
-        className={`${quicksand.className} absolute font-black pointer-events-none select-none`}
-        style={{
-          fontSize: "clamp(8rem, 16vw, 14rem)",
-          top: "30%",
-          right: "-2%",
-          color: "rgba(255,255,255,0.018)",
-          letterSpacing: "0.05em",
-          lineHeight: 1,
-          writingMode: "vertical-rl",
-          zIndex: 3,
-        }}
-      >
-        FATE
-      </p>
-
-      {/* Cross-hair details */}
-      <div className="absolute pointer-events-none" style={{ top: "14%", left: "5%", zIndex: 3 }}>
-        <div className="w-6 h-px bg-white/[0.08]" />
-        <div className="w-px h-6 bg-white/[0.08]" style={{ marginTop: "-0.5px", marginLeft: "11px" }} />
-      </div>
-      <div className="absolute pointer-events-none" style={{ bottom: "22%", right: "8%", zIndex: 3 }}>
-        <div className="w-4 h-px bg-white/[0.06]" />
-        <div className="w-px h-4 bg-white/[0.06]" style={{ marginTop: "-0.5px", marginLeft: "7px" }} />
       </div>
 
-      {/* ── FOREGROUND ─────────────────────────────────────────────── */}
-      <div className="max-w-[1400px] mx-auto px-6 md:px-10 relative" style={{ zIndex: 4 }}>
+      {/* Bottom gradient — only enough for text legibility */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: "linear-gradient(to top, rgba(8,10,11,0.82) 0%, rgba(8,10,11,0.1) 40%, transparent 70%)",
+        }}
+      />
 
-        {/* Header */}
-        <div className="relative mb-10 pt-8 pb-4 overflow-hidden">
-          <p
-            className={`${quicksand.className} absolute font-black uppercase pointer-events-none select-none`}
-            style={{
-              fontSize: "clamp(7rem, 20vw, 18rem)",
-              opacity: 0.03,
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              letterSpacing: "0.06em",
-              whiteSpace: "nowrap",
-              color: "#fff",
-            }}
-          >
-            FATE
-          </p>
+      {/* Gold tint wash on active */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `linear-gradient(135deg, ${GOLD}22 0%, transparent 55%)`,
+          opacity: isActive ? 1 : 0,
+          transition: "opacity 500ms ease",
+        }}
+      />
 
-          <p
-            className={`${caveat.className} text-base tracking-[0.3em] uppercase mb-3 ml-1`}
-            style={{ color: "rgba(255,255,255,0.3)" }}
-          >
-            Discover the rhythm of
-          </p>
+      {/* Top-left corner bracket */}
+      <div
+        className="absolute top-4 left-4 w-6 h-6 pointer-events-none"
+        style={{
+          borderTop: `1px solid ${GOLD}`,
+          borderLeft: `1px solid ${GOLD}`,
+          opacity: isActive ? 0.7 : 0,
+          transition: "opacity 400ms ease 100ms",
+        }}
+      />
 
-          <div className={`${quicksand.className} font-black uppercase leading-[0.9] tracking-tight`}>
-            <div style={{ fontSize: "clamp(4rem, 9vw, 8rem)", color: "#F5DEB3", letterSpacing: "-0.01em" }}>
-              Discover
-            </div>
-            <div
-              className="flex items-baseline gap-6"
-              style={{ fontSize: "clamp(4rem, 9vw, 8rem)", marginTop: "-0.08em" }}
-            >
+      {/* Content */}
+      <div className="relative w-full px-7 pb-6 pt-4">
+        <div className="flex items-end justify-between gap-4">
+
+          {/* Left: number + title + description */}
+          <div className="min-w-0">
+            <div className="flex items-center gap-3 mb-2">
               <span
+                className={`${sans.className} text-sm tabular-nums`}
                 style={{
-                  color: "rgba(255,255,255,0.12)",
-                  marginLeft: "clamp(2rem, 8vw, 9rem)",
-                  letterSpacing: "0.18em",
-                  fontSize: "clamp(2rem, 4vw, 3.8rem)",
-                  fontWeight: 300,
+                  color: isActive ? GOLD : "rgba(255,255,255,0.6)",
+                  fontWeight: 500,
+                  letterSpacing: "0.15em",
+                  textShadow: "0 1px 8px rgba(0,0,0,0.8)",
+                  transition: "color 300ms ease",
                 }}
               >
-                the city of
+                {cat.number}
               </span>
-              <span style={{ color: "#F5DEB3", letterSpacing: "-0.01em" }}>Fate</span>
+              <span
+                className={`${sans.className} text-xs uppercase tracking-[0.2em]`}
+                style={{
+                  color: GOLD,
+                  fontWeight: 500,
+                  opacity: isActive ? 1 : 0,
+                  transform: isActive ? "translateX(0)" : "translateX(-6px)",
+                  transition: "opacity 350ms ease 80ms, transform 400ms cubic-bezier(.16,1,.3,1) 80ms",
+                }}
+              >
+                {cat.tag}
+              </span>
+            </div>
+
+            <h3
+              className={`${serif.className} leading-tight`}
+              style={{
+                fontSize: isActive ? "clamp(1.9rem, 3vw, 2.5rem)" : "clamp(1.6rem, 2.5vw, 2.1rem)",
+                color: CREAM,
+                textShadow: isActive
+                  ? "0 2px 24px rgba(0,0,0,0.5)"
+                  : "0 1px 12px rgba(0,0,0,0.95), 0 2px 4px rgba(0,0,0,0.9)",
+                transition: "font-size 500ms cubic-bezier(.16,1,.3,1), text-shadow 400ms ease",
+              }}
+            >
+              {cat.title}
+            </h3>
+
+            <p
+              className={`${sans.className} font-300 leading-relaxed mt-2`}
+              style={{
+                fontSize: "1rem",
+                color: "rgba(245,237,224,0.5)",
+                maxHeight: isActive ? "4rem" : "0",
+                opacity: isActive ? 1 : 0,
+                overflow: "hidden",
+                transition: "max-height 500ms cubic-bezier(.16,1,.3,1), opacity 400ms ease 120ms",
+              }}
+            >
+              {cat.description}
+            </p>
+          </div>
+
+          {/* Right: arrow */}
+          <div
+            className="flex-shrink-0 flex items-center justify-center"
+            style={{
+              width: "44px",
+              height: "44px",
+              border: `1px solid ${GOLD}`,
+              opacity: isActive ? 1 : 0,
+              transform: isActive ? "scale(1) rotate(0deg)" : "scale(0.7) rotate(-15deg)",
+              transition: "opacity 350ms ease 80ms, transform 450ms cubic-bezier(.34,1.56,.64,1) 80ms",
+            }}
+          >
+            <ArrowUpRight style={{ color: GOLD, width: "18px", height: "18px" }} />
+          </div>
+        </div>
+      </div>
+
+      {/* Right-side thin accent bar */}
+      <div
+        className="absolute right-0 top-0 bottom-0"
+        style={{
+          width: "2px",
+          background: `linear-gradient(to bottom, transparent, ${GOLD}, transparent)`,
+          opacity: isActive ? 0.6 : 0,
+          transition: "opacity 400ms ease",
+        }}
+      />
+    </Link>
+  );
+}
+
+// ─── Main Section ─────────────────────────────────────────────────────────────
+
+export default function DiscoverFateSection() {
+  const [active, setActive] = useState<number | null>(null);
+
+  return (
+    <section className="relative overflow-hidden" style={{ backgroundColor: "#0C0E0F" }}>
+
+      {/* Gold top rule */}
+      <div className="absolute top-0 left-0 right-0 h-px" style={{ background: `linear-gradient(to right, transparent, ${GOLD}55, transparent)` }} />
+
+      {/* Ambient glow from active image */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: active !== null
+            ? `radial-gradient(ellipse at 75% 40%, ${GOLD}12 0%, transparent 55%)`
+            : "none",
+          transition: "background 800ms ease",
+        }}
+      />
+
+      {/* ── HERO HEADING ── */}
+      <div
+        className="relative max-w-[1300px] mx-auto px-6 md:px-12 lg:px-16"
+        style={{ paddingTop: "6rem", paddingBottom: "4rem" }}
+      >
+        {/* Label */}
+        <div className="flex items-center gap-3 mb-8">
+          <div className="w-6 h-px" style={{ background: GOLD }} />
+          <span
+            className={`${sans.className} text-sm uppercase tracking-[0.35em]`}
+            style={{ color: `${GOLD}AA`, fontWeight: 500 }}
+          >
+            Discover the City
+          </span>
+        </div>
+
+        {/* Main heading */}
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8">
+          <h2
+            className={`${serif.className} leading-[0.92]`}
+            style={{ fontSize: "clamp(3.5rem, 8vw, 6.5rem)", color: CREAM }}
+          >
+            Everything <br />
+            <em style={{ color: "rgba(245,237,224,0.35)" }}>that makes</em>
+            <br /> Fate.
+          </h2>
+
+          <p
+            className={`${sans.className} font-300 leading-relaxed max-w-xs lg:max-w-sm lg:pb-3`}
+            style={{ fontSize: "1.0625rem", color: "rgba(245,237,224,0.45)" }}
+          >
+            From immersive rooftop lounges to weekend street-culture events — the restaurants,
+            galleries, parks, and communities that power this city.
+          </p>
+        </div>
+
+        {/* Rule */}
+        <div className="h-px mt-10" style={{ background: "rgba(255,255,255,0.07)" }} />
+      </div>
+
+      {/* ── CATEGORY CARDS ── */}
+      <div
+        className="relative max-w-[1300px] mx-auto px-6 md:px-12 lg:px-16"
+        style={{ paddingBottom: "2rem" }}
+      >
+        <div
+          className="flex flex-col"
+          style={{ gap: "2px", border: "1px solid rgba(255,255,255,0.06)" }}
+        >
+          {categories.map((cat, i) => (
+            <CategoryCard
+              key={cat.title}
+              cat={cat}
+              isActive={i === active}
+              onEnter={() => setActive(i)}
+              onLeave={() => setActive(null)}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* ── CTA SECTION ── */}
+      <div
+        className="relative overflow-hidden"
+        style={{ marginTop: "5rem" }}
+      >
+        {/* CTA background image */}
+        <div className="absolute inset-0">
+          <Image
+            src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=2000&auto=format&fit=crop"
+            alt="City of Fate"
+            fill
+            className="object-cover"
+            style={{ filter: "brightness(0.25)" }}
+          />
+        </div>
+
+        {/* Gradient overlays */}
+        <div
+          className="absolute inset-0"
+          style={{ background: "linear-gradient(to bottom, #0C0E0F 0%, transparent 30%, transparent 70%, #0C0E0F 100%)" }}
+        />
+        <div
+          className="absolute inset-0"
+          style={{ background: `linear-gradient(135deg, ${GOLD}18 0%, transparent 50%)` }}
+        />
+
+        {/* Gold top rule */}
+        <div className="absolute top-0 left-0 right-0 h-px" style={{ background: `linear-gradient(to right, transparent, ${GOLD}40, transparent)` }} />
+
+        <div
+          className="relative max-w-[1300px] mx-auto px-6 md:px-12 lg:px-16 flex flex-col lg:flex-row items-start lg:items-end justify-between gap-10"
+          style={{ paddingTop: "6rem", paddingBottom: "6rem" }}
+        >
+          {/* Left text */}
+          <div className="max-w-xl">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-6 h-px" style={{ background: GOLD }} />
+              <span
+                className={`${sans.className} text-sm uppercase tracking-[0.35em]`}
+                style={{ color: `${GOLD}AA`, fontWeight: 500 }}
+              >
+                Plan Your Visit
+              </span>
+            </div>
+
+            <h2
+              className={`${serif.className} leading-[0.92]`}
+              style={{ fontSize: "clamp(2.8rem, 6vw, 5rem)", color: CREAM }}
+            >
+              Come experience <br />
+              <em style={{ color: `${GOLD}CC` }}>Fate for yourself.</em>
+            </h2>
+
+            <p
+              className={`${sans.className} font-300 leading-relaxed mt-6`}
+              style={{ fontSize: "1.0625rem", color: "rgba(245,237,224,0.45)", maxWidth: "36ch" }}
+            >
+              Register now to get early access to events, curated itineraries,
+              and exclusive experiences available only in Fate.
+            </p>
+
+            {/* Decorative stat row */}
+            <div className="flex items-center gap-8 mt-10">
+              {[["200+", "Events yearly"], ["60+", "Local venues"], ["12", "Neighbourhoods"]].map(([num, label]) => (
+                <div key={label}>
+                  <p
+                    className={`${serif.className}`}
+                    style={{ fontSize: "2rem", color: GOLD, lineHeight: 1 }}
+                  >
+                    {num}
+                  </p>
+                  <p
+                    className={`${sans.className} text-sm mt-1`}
+                    style={{ color: "rgba(245,237,224,0.35)", fontWeight: 300, letterSpacing: "0.03em" }}
+                  >
+                    {label}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
 
-          <div className="flex items-center gap-5 mt-6 ml-1">
-            <span className="block h-px bg-white/15" style={{ width: "clamp(2rem, 6vw, 5rem)" }} />
-            <p className="text-white/30 text-[10px] tracking-[0.35em] uppercase">
-              Stories · Experiences · Culture · Community
+          {/* Right: register card */}
+          <div
+            className="w-full lg:w-auto lg:min-w-[340px] flex-shrink-0 relative p-8"
+            style={{
+              border: `1px solid ${GOLD}30`,
+              background: "rgba(12,14,15,0.75)",
+              backdropFilter: "blur(16px)",
+              WebkitBackdropFilter: "blur(16px)",
+            }}
+          >
+            {/* Corner accents */}
+            {[
+              { top: 0, left: 0, borderTop: true, borderLeft: true },
+              { top: 0, right: 0, borderTop: true, borderRight: true },
+              { bottom: 0, left: 0, borderBottom: true, borderLeft: true },
+              { bottom: 0, right: 0, borderBottom: true, borderRight: true },
+            ].map((corner, i) => (
+              <div
+                key={i}
+                className="absolute w-4 h-4 pointer-events-none"
+                style={{
+                  top: corner.top !== undefined ? "-1px" : undefined,
+                  bottom: corner.bottom !== undefined ? "-1px" : undefined,
+                  left: corner.left !== undefined ? "-1px" : undefined,
+                  right: corner.right !== undefined ? "-1px" : undefined,
+                  borderTop: corner.borderTop ? `2px solid ${GOLD}` : undefined,
+                  borderBottom: corner.borderBottom ? `2px solid ${GOLD}` : undefined,
+                  borderLeft: corner.borderLeft ? `2px solid ${GOLD}` : undefined,
+                  borderRight: corner.borderRight ? `2px solid ${GOLD}` : undefined,
+                }}
+              />
+            ))}
+
+            <p
+              className={`${sans.className} text-xs uppercase tracking-[0.25em] mb-2`}
+              style={{ color: `${GOLD}90`, fontWeight: 500 }}
+            >
+              Free Registration
+            </p>
+
+            <h3
+              className={`${serif.className} leading-tight mb-1`}
+              style={{ fontSize: "1.6rem", color: CREAM }}
+            >
+              Join Fate
+            </h3>
+            <p
+              className={`${sans.className} font-300 text-sm mb-7`}
+              style={{ color: "rgba(245,237,224,0.35)" }}
+            >
+              Get early access. No spam, ever.
+            </p>
+
+            {/* Email input */}
+            <div className="relative mb-4">
+              <input
+                type="email"
+                placeholder="Your email address"
+                className={`${sans.className} w-full bg-transparent text-sm outline-none`}
+                style={{
+                  border: `1px solid rgba(200,169,126,0.2)`,
+                  padding: "14px 16px",
+                  color: CREAM,
+                  fontSize: "0.9375rem",
+                  letterSpacing: "0.01em",
+                }}
+                onFocus={(e) => (e.currentTarget.style.borderColor = `${GOLD}55`)}
+                onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(200,169,126,0.2)")}
+              />
+            </div>
+
+            {/* CTA button */}
+            <Link
+              href="/register"
+              className={`${sans.className} group w-full flex items-center justify-between px-5 py-4 text-sm font-500`}
+              style={{
+                background: GOLD,
+                color: "#0C0E0F",
+                letterSpacing: "0.04em",
+                fontWeight: 600,
+                transition: "background 300ms ease",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = "#D9BC96")}
+              onMouseLeave={(e) => (e.currentTarget.style.background = GOLD)}
+            >
+              <span>Register for Free</span>
+              <ArrowUpRight
+                className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
+                style={{ width: "16px", height: "16px" }}
+              />
+            </Link>
+
+            <p
+              className={`${sans.className} text-xs mt-4 text-center`}
+              style={{ color: "rgba(245,237,224,0.2)", fontWeight: 300 }}
+            >
+              By registering you agree to our Terms & Privacy Policy
             </p>
           </div>
         </div>
-
-        {/* Angled decorative lines */}
-        <div className="absolute left-0 right-0 pointer-events-none overflow-hidden" style={{ top: "18%", zIndex: 0 }}>
-          <svg width="100%" height="120" viewBox="0 0 1400 120" preserveAspectRatio="none" fill="none">
-            <line x1="0" y1="90" x2="520" y2="10" stroke="rgba(255,255,255,0.04)" strokeWidth="1" />
-            <line x1="480" y1="10" x2="1400" y2="85" stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
-            <line x1="0" y1="110" x2="300" y2="40" stroke="rgba(255,255,255,0.025)" strokeWidth="0.5" />
-          </svg>
-        </div>
-
-        {/* ── GRID ─────────────────────────────────────────────────── */}
-        <div className="grid lg:grid-cols-[1fr_400px] xl:grid-cols-[1fr_440px] gap-0 items-start relative">
-
-          {/* HERO IMAGE */}
-          <div
-            ref={heroRef}
-            onMouseMove={handleHeroMouseMove}
-            onMouseLeave={handleHeroMouseLeave}
-            className="relative flex-shrink-0 lg:mr-[-18px]"
-            style={{
-              height: "clamp(480px, 72vh, 760px)",
-              clipPath: "polygon(0 0, 100% 0, 100% 88%, 94% 100%, 0 100%)",
-              boxShadow: "0 0 0 1px rgba(255,255,255,0.07), 0 40px 100px rgba(0,0,0,0.7)",
-              transform: "translateY(-28px)",
-              zIndex: 2,
-              overflow: "hidden",
-              willChange: "transform",
-            }}
-          >
-            {categories.map((cat, i) => (
-              <div
-                key={cat.image}
-                className="absolute inset-0"
-                style={{
-                  opacity: i === active ? 1 : 0,
-                  transform: i === active ? "scale(1)" : "scale(1.04)",
-                  // Incoming image: bloom in with expo ease
-                  // Outgoing image: collapse with quint — faster exit
-                  transition: i === active
-                    ? `opacity 750ms ${EASE_OUT_EXPO}, transform 900ms ${EASE_OUT_EXPO}`
-                    : `opacity 400ms ${EASE_OUT_QUINT}, transform 400ms ${EASE_OUT_QUINT}`,
-                }}
-              >
-                <Image
-                  src={cat.image}
-                  alt={cat.title}
-                  fill
-                  className="object-cover"
-                  style={{
-                    transform: i === active ? "scale(1.04)" : "scale(1)",
-                    animation: i === active
-                      ? "slowZoom 14s ease-in-out infinite alternate"
-                      : "none",
-                    transition: `transform 900ms ${EASE_OUT_EXPO}`,
-                  }}
-                  priority={i === 0}
-                />
-              </div>
-            ))}
-
-            {/* Gradient overlay — physical color swap */}
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background: `linear-gradient(to top, ${activeCategory.accent}66 0%, transparent 55%)`,
-                transition: phys(["background"], "800ms", EASE_OUT_EXPO),
-              }}
-            />
-
-            {/* Film grain */}
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                backgroundImage: "url('/noise.png')",
-                opacity: 0.06,
-                mixBlendMode: "soft-light",
-              }}
-            />
-
-            {/* Hero bottom glass strip */}
-            <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
-              <div
-                className="backdrop-blur-md relative overflow-hidden flex items-end justify-between gap-4"
-                style={{
-                  borderRadius: "16px 6px 14px 10px",
-                  background:
-                    "linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)",
-                  border: "1px solid rgba(255,255,255,0.07)",
-                  boxShadow:
-                    "0 4px 24px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.05)",
-                  padding: "14px 20px",
-                }}
-              >
-                <div>
-                  {/* Tag — small pop with back ease so it feels pressed */}
-                  <span
-                    className="inline-block text-[9px] font-bold px-2 py-0.5 rounded-full mb-2 tracking-widest uppercase"
-                    style={{
-                      color: activeCategory.accent,
-                      background: "rgba(255,255,255,0.05)",
-                      border: "1px solid rgba(255,255,255,0.08)",
-                      transition: phys(["color"], "450ms", EASE_OUT_BACK),
-                    }}
-                  >
-                    {activeCategory.tag}
-                  </span>
-                  <h3
-                    className={`${quicksand.className} font-black text-white leading-tight`}
-                    style={{
-                      fontSize: "clamp(1.25rem, 2.5vw, 1.75rem)",
-                      letterSpacing: "-0.01em",
-                    }}
-                  >
-                    {activeCategory.title}
-                  </h3>
-                </div>
-
-                <Link
-                  href={activeCategory.href}
-                  className="flex-shrink-0 inline-flex items-center gap-1.5 text-xs font-semibold group whitespace-nowrap"
-                  style={{
-                    color: activeCategory.accent,
-                    transition: phys(["color"], "450ms", EASE_OUT_QUINT),
-                  }}
-                >
-                  Explore
-                  <ArrowRight
-                    className="w-3.5 h-3.5"
-                    style={{
-                      transition: phys(["transform"], "300ms", EASE_OUT_BACK),
-                    }}
-                  />
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* Floating accent dot between hero & cards */}
-          <div
-            className="hidden lg:block absolute rounded-full pointer-events-none"
-            style={{
-              width: 10,
-              height: 10,
-              top: "38%",
-              left: "calc(100% / 3 * 2 - 5px)",
-              backgroundColor: activeCategory.accent,
-              boxShadow: `0 0 24px 6px ${activeCategory.accent}55`,
-              zIndex: 4,
-              transform: "translateX(-50%)",
-              // Back ease so the dot springs to the new color
-              transition: phys(
-                ["background-color", "box-shadow"],
-                "600ms",
-                EASE_OUT_BACK
-              ),
-            }}
-          />
-
-          {/* ── CATEGORY CARDS ───────────────────────────────────── */}
-          <div
-            className="flex flex-col gap-3 overflow-y-auto pr-1 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/10 lg:pl-5 lg:pt-6"
-            style={{ maxHeight: "clamp(480px, 72vh, 760px)" }}
-          >
-            {categories.map((cat, i) => (
-              <div
-                key={cat.title}
-                ref={(el) => { cardRefs.current[i] = el; }}
-                onMouseEnter={() => handleCardEnter(i)}
-                onMouseMove={(e) => handleCardMouseMove(e, i)}
-                onMouseLeave={() => handleCardMouseLeave(i)}
-                className="group relative overflow-hidden cursor-pointer flex-shrink-0"
-                style={{
-                  height: i === active ? "114px" : "96px",
-                  marginRight: i % 2 === 0 ? "-12px" : "0px",
-                  marginLeft: i % 2 !== 0 ? "8px" : "0px",
-                  // Active card slides left with springy back ease
-                  transform: i === active ? "translateX(-4px)" : "none",
-                  zIndex: i === active ? 3 : 1,
-                  border:
-                    i === active
-                      ? "1px solid rgba(255,255,255,0.14)"
-                      : "1px solid rgba(255,255,255,0.05)",
-                  boxShadow:
-                    i === active
-                      ? `0 0 0 1px ${cat.accent}33, 0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)`
-                      : "0 4px 20px rgba(0,0,0,0.3)",
-                  borderRadius:
-                    i % 3 === 0
-                      ? "20px 6px 20px 6px"
-                      : i % 3 === 1
-                      ? "6px 20px 6px 20px"
-                      : "16px 16px 6px 6px",
-                  clipPath:
-                    i % 3 === 2 && i !== active
-                      ? "polygon(0 0, 100% 0, 100% 80%, 96% 100%, 0 100%)"
-                      : "none",
-                  willChange: "transform",
-                  // Physical transition stack:
-                  //  height   — expo out: fast expand, gentle settle
-                  //  box-shadow — quint: slightly behind height
-                  //  border   — quick, quasi-instantaneous feel
-                  transition: [
-                    `height 420ms ${EASE_OUT_EXPO}`,
-                    `box-shadow 420ms ${EASE_OUT_QUINT} 30ms`,
-                    `border-color 350ms ${EASE_OUT_QUINT}`,
-                    `transform 600ms ${EASE_OUT_BACK}`,
-                  ].join(", "),
-                }}
-              >
-                {/* Background image */}
-                <Image
-                  src={cat.image}
-                  alt={cat.title}
-                  fill
-                  className="object-cover"
-                  style={{
-                    transform: i === active ? "scale(1.05)" : "scale(1)",
-                    filter: i === active
-                      ? "brightness(0.75)"
-                      : "brightness(0.5)",
-                    // Scale and brightness each get their own curve + delay
-                    transition: [
-                      `transform 700ms ${EASE_OUT_EXPO}`,
-                      `filter 500ms ${EASE_OUT_QUINT} 50ms`,
-                    ].join(", "),
-                  }}
-                />
-
-                {/* Gradient overlay */}
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    background:
-                      i === active
-                        ? `linear-gradient(to right, ${cat.accent}55 0%, transparent 70%)`
-                        : "linear-gradient(to right, rgba(0,0,0,0.55) 0%, transparent 80%)",
-                    transition: phys(["background"], "700ms", EASE_IN_OUT_CIRC),
-                  }}
-                />
-
-                {/* Card content */}
-                <div
-                  className="absolute inset-0 flex items-center justify-between px-5"
-                  style={{
-                    backdropFilter: i === active ? "blur(2px)" : "none",
-                    WebkitBackdropFilter: i === active ? "blur(2px)" : "none",
-                    transition: phys(["backdrop-filter"], "400ms", EASE_OUT_QUINT),
-                  }}
-                >
-                  <div>
-                    {/* Tag badge — springs into accent color */}
-                    <span
-                      className="inline-block text-[10px] font-bold uppercase tracking-widest mb-2 px-2 py-0.5 rounded-full"
-                      style={{
-                        color: i === active ? cat.accent : "rgba(255,255,255,0.4)",
-                        background:
-                          i === active ? "rgba(255,255,255,0.07)" : "transparent",
-                        border:
-                          i === active
-                            ? "1px solid rgba(255,255,255,0.08)"
-                            : "1px solid transparent",
-                        // Staggered: color pops first, background blooms after
-                        transition: [
-                          `color 300ms ${EASE_OUT_BACK}`,
-                          `background 400ms ${EASE_OUT_QUINT} 60ms`,
-                          `border-color 400ms ${EASE_OUT_QUINT} 60ms`,
-                        ].join(", "),
-                      }}
-                    >
-                      {cat.tag}
-                    </span>
-                    <p className="text-white font-semibold text-sm leading-snug">
-                      {cat.title}
-                    </p>
-                  </div>
-
-                  {/* Arrow — slides in from right with spring */}
-                  <Link
-                    href={cat.href}
-                    className="flex-shrink-0 ml-4"
-                    style={{
-                      color: cat.accent,
-                      opacity: 0,
-                      transform: "translateX(8px)",
-                      transition: [
-                        `opacity 280ms ${EASE_OUT_QUINT}`,
-                        `transform 360ms ${EASE_OUT_BACK}`,
-                      ].join(", "),
-                    }}
-                    onMouseEnter={(e) => {
-                      const el = e.currentTarget as HTMLElement;
-                      el.style.opacity = "1";
-                      el.style.transform = "translateX(0) translateY(-1px) scale(1.1)";
-                    }}
-                    onMouseLeave={(e) => {
-                      const el = e.currentTarget as HTMLElement;
-                      // Re-check if card is active
-                      if (i === active) {
-                        el.style.opacity = "1";
-                        el.style.transform = "translateX(0)";
-                      } else {
-                        el.style.opacity = "0";
-                        el.style.transform = "translateX(8px)";
-                      }
-                    }}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
-                </div>
-
-                {/* Active indicator — diagonal slash
-                    Width animates with back ease for a "click" feel */}
-                <div
-                  className="absolute left-0 top-0 bottom-0"
-                  style={{
-                    width: i === active ? "5px" : "3px",
-                    backgroundColor: i === active ? cat.accent : "transparent",
-                    clipPath:
-                      i === active
-                        ? "polygon(0 0, 100% 8%, 100% 92%, 0 100%)"
-                        : "none",
-                    boxShadow:
-                      i === active ? `2px 0 12px ${cat.accent}66` : "none",
-                    transition: [
-                      `width 350ms ${EASE_OUT_BACK}`,
-                      `background-color 400ms ${EASE_OUT_QUINT} 50ms`,
-                      `box-shadow 500ms ${EASE_OUT_QUINT} 80ms`,
-                    ].join(", "),
-                  }}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
+
+      {/* Bottom rule */}
+      <div className="h-px" style={{ background: `linear-gradient(to right, transparent, ${GOLD}30, transparent)` }} />
     </section>
   );
 }
