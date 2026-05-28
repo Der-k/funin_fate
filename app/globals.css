@@ -84,9 +84,7 @@
   border-color: var(--border);
 }
 
-html {
-  scroll-behavior: smooth;
-}
+
 
 body {
   background: var(--background);
@@ -290,7 +288,6 @@ body {
 }
 
 html {
-  font-size: 67%;          /* 67% of 16px = ~10.7px base, same visual effect */
   scroll-behavior: smooth;
 }
 

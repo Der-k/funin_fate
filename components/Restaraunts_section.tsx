@@ -63,7 +63,6 @@ function RestaurantImageCard({
 }) {
   return (
     <div className="group relative overflow-hidden rounded-[20px] sm:rounded-[28px]">
-      {/* Mobile: shorter cards; desktop: original height */}
       <div className="relative h-[180px] sm:h-[200px] lg:h-[240px] w-full overflow-hidden rounded-[20px] sm:rounded-[28px]">
         <Image
           src={image}
@@ -79,12 +78,12 @@ function RestaurantImageCard({
 
         <div className="absolute bottom-4 left-4 sm:bottom-5 sm:left-5">
           <p
-            className={`text-xs uppercase tracking-[0.25em] text-[#20B2AA] ${caveat.className}`}
+            className={`text-sm uppercase tracking-[0.25em] text-[#20B2AA] ${caveat.className}`}
           >
             Dining
           </p>
           <h3
-            className={`mt-1 text-xl sm:text-2xl font-black text-[#F5DEB3] ${quicksand.className}`}
+            className={`mt-1 text-2xl sm:text-3xl font-black text-[#F5DEB3] ${quicksand.className}`}
           >
             {title}
           </h3>
@@ -104,7 +103,7 @@ function FeaturedCard() {
 
       <div className="relative z-10">
         <p
-          className={`text-xs uppercase tracking-[0.35em] text-[#20B2AA] ${caveat.className}`}
+          className={`text-sm uppercase tracking-[0.35em] text-[#20B2AA] ${caveat.className}`}
         >
           Culinary Experiences
         </p>
@@ -119,20 +118,22 @@ function FeaturedCard() {
           Funinfate
         </h2>
 
-        <p
-          className={`mt-4 sm:mt-5 max-w-md text-sm leading-relaxed text-[#F5DEB3]/70 ${caveat.className}`}
-        >
-          From immersive rooftop lounges to curated chef experiences,
-          discover the restaurants, nightlife, and social spaces powering
-          the energy of Funinfate.
-        </p>
+       <p className={`mt-4 sm:mt-5 max-w-md text-xl sm:text-2xl leading-relaxed text-[#F5DEB3]/70 ${caveat.className}`}>
+  From immersive rooftop lounges to curated chef experiences,
+  discover the restaurants, nightlife, and social spaces powering
+  the energy of Funinfate.
+</p>
+
+
+
+
 
         <div className="mt-5 sm:mt-6 h-px w-16 bg-gradient-to-r from-[#CC4125] to-transparent" />
 
         <div className="mt-5 sm:mt-6 flex flex-col xs:flex-row flex-wrap gap-3 sm:gap-4">
           <Link
             href="/restaurants"
-            className={`group inline-flex items-center justify-center gap-2 rounded-full bg-[#20B2AA] px-5 sm:px-6 py-2.5 sm:py-3 text-sm font-semibold text-[#020817] transition hover:scale-[1.02] hover:bg-[#1a9e97] ${quicksand.className}`}
+            className={`group inline-flex items-center justify-center gap-2 rounded-full bg-[#20B2AA] px-5 sm:px-6 py-2.5 sm:py-3 text-base font-semibold text-[#020817] transition hover:scale-[1.02] hover:bg-[#1a9e97] ${quicksand.className}`}
           >
             Explore Dining
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -140,7 +141,7 @@ function FeaturedCard() {
 
           <Link
             href="/experience"
-            className={`inline-flex items-center justify-center rounded-full border border-[#F5DEB3]/25 px-5 sm:px-6 py-2.5 sm:py-3 text-sm font-semibold text-[#F5DEB3] transition hover:bg-[#CC4125] hover:border-[#CC4125] hover:text-white ${quicksand.className}`}
+            className={`inline-flex items-center justify-center rounded-full border border-[#F5DEB3]/25 px-5 sm:px-6 py-2.5 sm:py-3 text-base font-semibold text-[#F5DEB3] transition hover:bg-[#CC4125] hover:border-[#CC4125] hover:text-white ${quicksand.className}`}
           >
             View Experiences
           </Link>
@@ -161,7 +162,7 @@ export default function RestaurantShowcaseSection() {
         <div className="mb-10 sm:mb-16 max-w-3xl">
           <div className="flex items-center gap-3">
             <span className="h-2 w-2 rounded-full bg-[#CC4125]" />
-            <p className={`text-xs sm:text-sm uppercase tracking-[0.25em] sm:tracking-[0.35em] text-[#20B2AA] ${quicksand.className}`}>
+            <p className={`text-sm sm:text-base uppercase tracking-[0.25em] sm:tracking-[0.35em] text-[#20B2AA] ${quicksand.className}`}>
               Restaurants & Nightlife
             </p>
           </div>
@@ -176,17 +177,12 @@ export default function RestaurantShowcaseSection() {
 
           <div className="mt-4 h-[3px] w-20 sm:w-24 rounded-full bg-gradient-to-r from-[#CC4125] via-[#20B2AA] to-transparent" />
 
-          <p
-            className={`mt-5 sm:mt-6 text-base sm:text-lg leading-relaxed text-[#36454F]/60 ${caveat.className}`}
-          >
-            Discover premium dining destinations, social venues,
-            networking lounges, and curated culinary experiences
-            designed around the energy of Funinfate.
-          </p>
+         <p className={`mt-5 sm:mt-6 text-xl sm:text-2xl leading-relaxed text-[#36454F]/60 ${caveat.className}`}>
+  Discover premium dining destinations, social venues,
+  networking lounges, and curated culinary experiences
+  designed around the energy of Funinfate.
+</p>
         </div>
-
-        {/* ── MOBILE: Featured card first, then 2-col image grid ── */}
-        {/* ── DESKTOP: 3-column layout: images | featured | images ── */}
 
         {/* Mobile featured card — hidden on lg+ */}
         <div className="mb-5 lg:hidden">
