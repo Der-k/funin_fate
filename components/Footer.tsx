@@ -112,7 +112,7 @@ export default function Footer() {
   "Eat & Drink",
   "Events",
   "Plan Your Stay",
-  "News",
+  
             ].map((item, index) => (
               <div key={index} className="flex items-center gap-7">
                 <Link

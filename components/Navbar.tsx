@@ -18,7 +18,7 @@ const NAV_ITEMS = [
   "Eat & Drink",
   "Events",
   "Plan Your Stay",
-  "News",
+  
 ];
 
 const t = (scrolled: boolean, onHero: string, onPage: string) =>
