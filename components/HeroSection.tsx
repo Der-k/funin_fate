@@ -414,10 +414,18 @@ paddingBottom: "clamp(72px, 12vh, 100px)",  // more breathing room at bottom
 
       {/* ── Headline ── */}
       {mounted && (
-        <h1 className={`hero-headline ${quicksand.className}`}>
-          live well,
-          live fate!
-        </h1>
+       <h1
+  className={`hero-headline ${quicksand.className}`}
+  style={{
+    textTransform: "uppercase",
+    fontWeight: 500,
+    letterSpacing: "-0.04em",
+  }}
+>
+  LIVE WELL,
+  <br />
+  LIVE FATE!
+</h1>
       )}
 
       {/* ── Filter Controls ── */}

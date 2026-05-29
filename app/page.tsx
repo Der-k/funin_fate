@@ -21,13 +21,13 @@ export default async function HomePage() {
       <Navbar />
 
       <HeroSection />
-       <OverviewSection />
+     
        <DiscoverHighlightsSection />
     <Restarauntssection/>
      <ShowcaseVideoSection />
      <Fateventsection />
-    <AccommodationSection />
-      <FateNewsSection />
+    
+
    
 
       <Footer />

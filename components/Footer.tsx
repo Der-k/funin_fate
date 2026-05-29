@@ -1,13 +1,31 @@
 "use client";
 
 import Link from "next/link";
-import * as Icons from "lucide-react";
-import { Caveat } from "next/font/google";
+import { MapPin } from "lucide-react";
+import { Quicksand } from "next/font/google";
 
-const caveat = Caveat({
+const quicksand = Quicksand({
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
+  weight: ["300", "400", "500", "600", "700"],
 });
+
+const XIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" width={18} height={18}>
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z" />
+  </svg>
+);
+
+const InstagramIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" width={18} height={18}>
+    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+  </svg>
+);
+
+const FacebookIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" width={18} height={18}>
+    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+  </svg>
+);
 
 export default function Footer() {
   return (
@@ -26,20 +44,14 @@ export default function Footer() {
         </div>
 
         <div className="relative z-10 max-w-6xl mx-auto text-center">
-
-          {/* Handwritten eyebrow — matches "Welcome to Fun in Fate" pattern */}
-          <p className={`text-[#CC4125] text-3xl md:text-4xl mb-4 ${caveat.className}`}>
+          <p className={`text-[#CC4125] text-3xl md:text-4xl mb-4 ${quicksand.className}`}>
             Stay Connected
           </p>
-
-          {/* Main heading — font-black uppercase, same scale as all sections */}
           <h2 className="text-[#111111] text-5xl md:text-7xl font-black uppercase leading-[0.95] tracking-tight mb-10">
             Become a
             <br />
             Fate Insider
           </h2>
-
-          {/* CTA — exact OverviewSection "Explore More" button */}
           <button className="
             inline-flex items-center justify-center
             h-14 px-10
@@ -50,7 +62,6 @@ export default function Footer() {
           ">
             Sign Up
           </button>
-
         </div>
       </section>
 
@@ -60,19 +71,17 @@ export default function Footer() {
       <section className="bg-[#36454f] px-6 md:px-12 lg:px-16 py-20">
         <div className="max-w-[1700px] mx-auto">
 
-          {/* TOP ROW */}
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-14 mb-16">
+          {/* TOP ROW — centered */}
+          <div className="flex flex-col items-center text-center gap-10 mb-16">
 
             {/* Logo + description */}
-            <div>
+            <div className="flex flex-col items-center">
               <Link href="/" className="inline-block">
                 <h2 className="text-[#20B2AA] text-7xl md:text-8xl font-black tracking-tight leading-none">
                   Fate
                 </h2>
               </Link>
-
-              {/* Description — Caveat, matches section body style */}
-              <p className={`text-white/60 mt-5 max-w-md text-xl md:text-2xl leading-relaxed ${caveat.className}`}>
+              <p className={`text-white/60 mt-5 max-w-md text-xl md:text-2xl leading-relaxed ${quicksand.className}`}>
                 Discover restaurants, nightlife, shopping,
                 live events, attractions, and unforgettable
                 local experiences throughout Fate.
@@ -82,14 +91,16 @@ export default function Footer() {
             {/* Socials */}
             <div className="flex items-center gap-5">
               {[
-                { icon: <Icons.Camera size={18} /> },
-                { icon: <Icons.Users size={18} /> },
-                { icon: <Icons.Play size={18} /> },
-                { icon: <Icons.MessageCircle size={18} /> },
+                { icon: <XIcon />, href: "https://x.com/VisitFate", label: "X (Twitter)" },
+                { icon: <InstagramIcon />, href: "https://www.instagram.com/visitfate/", label: "Instagram" },
+                { icon: <FacebookIcon />, href: "https://web.facebook.com/profile.php/?id=61589634350805&_rdc=1&_rdr", label: "Facebook" },
               ].map((item, index) => (
                 <Link
                   key={index}
-                  href="/"
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={item.label}
                   className="
                     flex items-center justify-center
                     w-11 h-11 rounded-full
@@ -105,15 +116,9 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* NAV LINKS — Caveat, larger to match system scale */}
-          <div className="flex flex-wrap items-center gap-x-7 gap-y-4 border-t border-white/10 pt-10">
-            {[
-              "Discover",
-  "Eat & Drink",
-  "Events",
-  "Plan Your Stay",
-  
-            ].map((item, index) => (
+          {/* NAV LINKS — centered */}
+          <div className="flex flex-wrap justify-center items-center gap-x-7 gap-y-4 border-t border-white/10 pt-10">
+            {["Discover", "Eat & Drink", "Events", "Plan Your Stay"].map((item, index, arr) => (
               <div key={index} className="flex items-center gap-7">
                 <Link
                   href="/"
@@ -121,7 +126,7 @@ export default function Footer() {
                     group relative
                     text-white/80 text-xl md:text-2xl
                     hover:text-white transition-colors
-                    ${caveat.className}
+                    ${quicksand.className}
                   `}
                 >
                   {item}
@@ -133,8 +138,8 @@ export default function Footer() {
                   " />
                 </Link>
 
-                {index !== 7 && (
-                  <span className={`text-[#CC4125] text-xl ${caveat.className}`}>//</span>
+                {index !== arr.length - 1 && (
+                  <span className={`text-[#CC4125] text-xl ${quicksand.className}`}>//</span>
                 )}
               </div>
             ))}
@@ -143,19 +148,17 @@ export default function Footer() {
           {/* BOTTOM ROW */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5 mt-14 pt-8 border-t border-white/10">
 
-            {/* Copyright — Caveat */}
-            <div className={`flex items-center gap-3 text-white/45 text-lg ${caveat.className}`}>
-              <Icons.MapPin size={15} />
-              <p>© 2026 Visit Fate. All rights reserved.</p>
+            <div className={`flex items-center justify-center md:justify-start gap-3 text-white/45 text-lg ${quicksand.className}`}>
+              <MapPin size={15} />
+              <p>  ©2026 Visit Fate – All Rights Reserved  ©2026 Live Well, Live Fate!  - All Rights Reserved. </p>
             </div>
 
-            {/* Legal links — Caveat */}
-            <div className="flex items-center gap-8">
+            <div className="flex items-center justify-center md:justify-end gap-8">
               {["About Us", "Contact", "Privacy Policy"].map((label) => (
                 <Link
                   key={label}
                   href={`/${label.toLowerCase().replace(/\s+/g, "-")}`}
-                  className={`text-white/55 hover:text-white text-lg transition-colors ${caveat.className}`}
+                  className={`text-white/55 hover:text-white text-lg transition-colors ${quicksand.className}`}
                 >
                   {label}
                 </Link>

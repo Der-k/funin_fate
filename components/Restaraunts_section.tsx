@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { Caveat, Quicksand } from "next/font/google";
+import { Quicksand } from "next/font/google";
 
 const restaurantImages = [
   {
@@ -44,11 +44,6 @@ const restaurantImages = [
   },
 ];
 
-const caveat = Caveat({
-  subsets: ["latin"],
-  weight: ["400", "600", "700"],
-});
-
 const quicksand = Quicksand({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
@@ -78,7 +73,7 @@ function RestaurantImageCard({
 
         <div className="absolute bottom-4 left-4 sm:bottom-5 sm:left-5">
           <p
-            className={`text-sm uppercase tracking-[0.25em] text-[#20B2AA] ${caveat.className}`}
+            className={`text-sm uppercase tracking-[0.25em] text-[#20B2AA] ${quicksand.className}`}
           >
             Dining
           </p>
@@ -103,7 +98,7 @@ function FeaturedCard() {
 
       <div className="relative z-10">
         <p
-          className={`text-sm uppercase tracking-[0.35em] text-[#20B2AA] ${caveat.className}`}
+          className={`text-sm uppercase tracking-[0.35em] text-[#20B2AA] ${quicksand.className}`}
         >
           Culinary Experiences
         </p>
@@ -118,15 +113,11 @@ function FeaturedCard() {
           Funinfate
         </h2>
 
-       <p className={`mt-4 sm:mt-5 max-w-md text-xl sm:text-2xl leading-relaxed text-[#F5DEB3]/70 ${caveat.className}`}>
-  From immersive rooftop lounges to curated chef experiences,
-  discover the restaurants, nightlife, and social spaces powering
-  the energy of Funinfate.
-</p>
-
-
-
-
+        <p className={`mt-4 sm:mt-5 max-w-md text-xl sm:text-2xl leading-relaxed text-[#F5DEB3]/70 ${quicksand.className}`}>
+          From immersive rooftop lounges to curated chef experiences,
+          discover the restaurants, nightlife, and social spaces powering
+          the energy of Funinfate.
+        </p>
 
         <div className="mt-5 sm:mt-6 h-px w-16 bg-gradient-to-r from-[#CC4125] to-transparent" />
 
@@ -170,18 +161,18 @@ export default function RestaurantShowcaseSection() {
           <h2
             className={`mt-4 text-4xl sm:text-5xl font-black uppercase leading-[0.95] text-[#36454F] md:text-7xl ${quicksand.className}`}
           >
-            Eat, Meet,
+            Eat and 
             <br />
-            Connect.
+            Drink.
           </h2>
 
           <div className="mt-4 h-[3px] w-20 sm:w-24 rounded-full bg-gradient-to-r from-[#CC4125] via-[#20B2AA] to-transparent" />
 
-         <p className={`mt-5 sm:mt-6 text-xl sm:text-2xl leading-relaxed text-[#36454F]/60 ${caveat.className}`}>
-  Discover premium dining destinations, social venues,
-  networking lounges, and curated culinary experiences
-  designed around the energy of Funinfate.
-</p>
+          <p className={`mt-5 sm:mt-6 text-xl sm:text-2xl leading-relaxed text-[#36454F]/60 ${quicksand.className}`}>
+            Discover premium dining destinations, social venues,
+            networking lounges, and curated culinary experiences
+            designed around the energy of Funinfate.
+          </p>
         </div>
 
         {/* Mobile featured card — hidden on lg+ */}
