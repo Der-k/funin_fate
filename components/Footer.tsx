@@ -47,11 +47,13 @@ export default function Footer() {
           <p className={`text-[#CC4125] text-3xl md:text-4xl mb-4 ${quicksand.className}`}>
             Stay Connected
           </p>
-          <h2 className="text-[#111111] text-5xl md:text-7xl font-black uppercase leading-[0.95] tracking-tight mb-10">
-            Become a
-            <br />
-            Fate Insider
-          </h2>
+         <h2
+  className={`${quicksand.className} text-[#111111] text-5xl md:text-7xl font-bold uppercase leading-[0.9] tracking-[-0.05em] mb-10`}
+>
+  BECOME A
+  <br />
+  FATE INSIDER
+</h2>
           <button className="
             inline-flex items-center justify-center
             h-14 px-10
@@ -77,9 +79,11 @@ export default function Footer() {
             {/* Logo + description */}
             <div className="flex flex-col items-center">
               <Link href="/" className="inline-block">
-                <h2 className="text-[#20B2AA] text-7xl md:text-8xl font-black tracking-tight leading-none">
-                  Fate
-                </h2>
+                <h2
+  className={`${quicksand.className} text-[#20B2AA] text-7xl md:text-8xl font-bold uppercase tracking-[-0.06em] leading-none`}
+>
+  FATE
+</h2>
               </Link>
               <p className={`text-white/60 mt-5 max-w-md text-xl md:text-2xl leading-relaxed ${quicksand.className}`}>
                 Discover restaurants, nightlife, shopping,
