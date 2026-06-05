@@ -24,18 +24,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
-        className={`
-          ${geistSans.variable}
-          ${geistMono.variable}
-          ${caveat.variable}
-          antialiased
-        `}
-      >
-      
-          {children}
-      
-      </body>
+   <body
+  className={`
+    ${geistSans.variable}
+    ${geistMono.variable}
+    ${caveat.variable}
+    antialiased
+  `}
+>
+  <div className="site-scale">
+    {children}
+  </div>
+</body>
     </html>
   );
 }
