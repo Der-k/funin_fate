@@ -4,7 +4,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Quicksand } from "next/font/google";
-
+import { useState } from "react";
+ 
+// ─── Palette ──────────────────────────────────────────────────────────────────
+const TEAL     = "#20B2AA";
+const RUST     = "#CC4125";
+const WHEAT    = "#F5DEB3";
+const CHARCOAL = "#36454F";
+const WHITE    = "#FFFFFF";
 const restaurantImages = [
   {
     id: 1,
@@ -92,52 +99,141 @@ function RestaurantImageCard({
 }
 
 function FeaturedCard() {
+  const [exploreHovered, setExploreHovered] = useState(false);
+  const [expHovered, setExpHovered] = useState(false);
+
   return (
-    <div className="relative overflow-hidden rounded-[24px] sm:rounded-[32px] border border-[#36454F]/20 bg-[#36454F] p-6 sm:p-8 shadow-xl h-full">
-      {/* Teal glow */}
-      <div className="absolute -right-20 -top-20 h-56 w-56 rounded-full bg-[#20B2AA]/20 blur-3xl" />
-      {/* Rust accent glow */}
-      <div className="absolute -left-16 -bottom-16 h-48 w-48 rounded-full bg-[#CC4125]/25 blur-3xl" />
+    <div
+      className="relative overflow-hidden rounded-[24px] sm:rounded-[32px] p-6 sm:p-8 shadow-xl h-full"
+      style={{
+        background: CHARCOAL,
+        border: `1px solid rgba(32,178,170,0.2)`,
+      }}
+    >
+      {/* Teal glow top-right */}
+      <div
+        className="absolute -right-20 -top-20 h-56 w-56 rounded-full blur-3xl pointer-events-none"
+        style={{ background: `${TEAL}25` }}
+      />
+      {/* Rust glow bottom-left */}
+      <div
+        className="absolute -left-16 -bottom-16 h-48 w-48 rounded-full blur-3xl pointer-events-none"
+        style={{ background: `${RUST}30` }}
+      />
+      {/* Wheat subtle center tone */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-5"
+        style={{ background: `radial-gradient(circle at 50% 50%, ${WHEAT}, transparent 70%)` }}
+      />
 
       <div className="relative z-10">
-        <p
-          className={`text-sm uppercase tracking-[0.35em] text-[#20B2AA] ${quicksand.className}`}
-        >
-          Culinary Experiences
-        </p>
+        {/* Eyebrow */}
+        <div className="flex items-center gap-3 mb-4">
+          <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ background: TEAL }} />
+          <p
+            className={`text-sm uppercase tracking-[0.35em] font-bold ${quicksand.className}`}
+            style={{ color: `${TEAL}` }}
+          >
+            Culinary Experiences
+          </p>
+        </div>
 
-        {/* ✅ Featured card heading: white (on dark card bg) */}
+        {/* Title */}
         <h2
-          className={`mt-4 text-3xl sm:text-4xl lg:text-5xl font-black uppercase leading-none text-wheat ${quicksand.className}`}
+          className={`text-3xl sm:text-4xl lg:text-5xl font-black uppercase leading-[0.95] ${quicksand.className}`}
+          style={{ color: WHEAT }}
         >
           Taste The
           <br />
           Future Of
           <br />
-          Funinfate
+          <span style={{ color: TEAL }}>Funinfate.</span>
         </h2>
 
-        {/* ✅ Featured card body: white/70 (on dark card bg) */}
-        <p className={`mt-4 sm:mt-5 max-w-md text-xl sm:text-2xl leading-relaxed text-wheat/70 ${quicksand.className}`}>
+        {/* Gradient bar — teal → rust */}
+        <div
+          className="mt-4 h-[3px] w-20 rounded-full"
+          style={{ background: `linear-gradient(to right, ${TEAL}, ${RUST}, transparent)` }}
+        />
+
+        {/* Body */}
+        <p
+          className={`mt-5 sm:mt-6 max-w-md text-xl sm:text-2xl leading-relaxed ${quicksand.className}`}
+          style={{ color: `${WHEAT}99` }}
+        >
           From immersive rooftop lounges to curated chef experiences,
           discover the restaurants, nightlife, and social spaces powering
           the energy of Funinfate.
         </p>
 
-        <div className="mt-5 sm:mt-6 h-px w-16 bg-gradient-to-r from-[#CC4125] to-transparent" />
-
-        <div className="mt-5 sm:mt-6 flex flex-col xs:flex-row flex-wrap gap-3 sm:gap-4">
+        {/* ── STANDARDISED BUTTONS ── */}
+        <div className="mt-6 sm:mt-8 flex flex-col xs:flex-row flex-wrap gap-3 sm:gap-4">
+          {/* Primary: teal fill → rust slide-in */}
           <Link
             href="/restaurants"
-            className={`group inline-flex items-center justify-center gap-2 rounded-full bg-[#20B2AA] px-5 sm:px-6 py-2.5 sm:py-3 text-base font-semibold text-[#020817] transition hover:scale-[1.02] hover:bg-[#1a9e97] ${quicksand.className}`}
+            onMouseEnter={() => setExploreHovered(true)}
+            onMouseLeave={() => setExploreHovered(false)}
+            className={`group relative inline-flex items-center justify-center overflow-hidden h-12 md:h-14 px-7 md:px-8 gap-2 ${quicksand.className}`}
+            style={{
+              background: TEAL,
+              color: "#0D1B24",
+              textTransform: "uppercase",
+              letterSpacing: "0.18em",
+              fontSize: "0.75rem",
+              fontWeight: 700,
+              textDecoration: "none",
+            }}
           >
-            Explore Dining
-            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+            <span
+              style={{
+                position: "absolute",
+                inset: 0,
+                background: RUST,
+                transform: exploreHovered ? "scaleX(1)" : "scaleX(0)",
+                transformOrigin: "left",
+                transition: "transform 500ms cubic-bezier(.16,1,.3,1)",
+              }}
+            />
+            <span
+              style={{
+                position: "relative",
+                zIndex: 1,
+                color: exploreHovered ? WHITE : "#0D1B24",
+                transition: "color 300ms ease",
+              }}
+            >
+              Explore Dining
+            </span>
+            <ArrowRight
+              style={{
+                position: "relative",
+                zIndex: 1,
+                width: "16px",
+                height: "16px",
+                color: exploreHovered ? WHITE : "#0D1B24",
+                transition: "color 300ms ease, transform 300ms ease",
+                transform: exploreHovered ? "translateX(3px)" : "translateX(0)",
+              }}
+            />
           </Link>
 
+          {/* Secondary: wheat border → fills charcoal-dark on hover */}
           <Link
             href="/experience"
-            className={`inline-flex items-center justify-center rounded-full border border-white/25 px-5 sm:px-6 py-2.5 sm:py-3 text-base font-semibold text-white transition hover:bg-[#CC4125] hover:border-[#CC4125] hover:text-white ${quicksand.className}`}
+            onMouseEnter={() => setExpHovered(true)}
+            onMouseLeave={() => setExpHovered(false)}
+            className={`inline-flex items-center justify-center h-12 md:h-14 px-7 md:px-8 ${quicksand.className}`}
+            style={{
+              border: `1px solid ${WHEAT}55`,
+              color: expHovered ? CHARCOAL : WHEAT,
+              background: expHovered ? WHEAT : "transparent",
+              textTransform: "uppercase",
+              letterSpacing: "0.18em",
+              fontSize: "0.75rem",
+              fontWeight: 600,
+              textDecoration: "none",
+              transition: "all 300ms ease",
+            }}
           >
             View Experiences
           </Link>
