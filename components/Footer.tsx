@@ -1,13 +1,23 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { MapPin } from "lucide-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { MapPin, ArrowUpRight } from "lucide-react";
 import { Quicksand } from "next/font/google";
 
 const quicksand = Quicksand({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
 });
+
+// ─── Palette ──────────────────────────────────────────────────────────────────
+const GOLD     = "#20B2AA";
+const RUST     = "#CC4125";
+const CREAM    = "#F5DEB3";
+const CHARCOAL = "#1E2328";
+const WHITE    = "#FFFFFF";
 
 const XIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" width={18} height={18}>
@@ -27,45 +37,186 @@ const FacebookIcon = () => (
   </svg>
 );
 
+// ─── Register Button ──────────────────────────────────────────────────────────
+
+function RegisterButton({ onClick }: { onClick: () => void }) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className={`${quicksand.className} w-full flex items-center justify-between px-5 py-4 text-sm rounded-full cursor-pointer`}
+      style={{
+        background: hovered ? "#1A9E97" : GOLD,
+        color: "#0D1B24",
+        letterSpacing: "0.04em",
+        fontWeight: 700,
+        border: "none",
+        transition: "background 300ms ease",
+      }}
+    >
+      <span>Register for Free</span>
+      <ArrowUpRight
+        style={{
+          width: "16px",
+          height: "16px",
+          transform: hovered ? "translate(1px, -1px)" : "translate(0, 0)",
+          transition: "transform 200ms ease",
+        }}
+      />
+    </button>
+  );
+}
+
 export default function Footer() {
+  const [email, setEmail] = useState("");
+  const router = useRouter();
+
+  const handleRegister = () => {
+    const params = email.trim()
+      ? `?email=${encodeURIComponent(email.trim())}`
+      : "";
+    router.push(`/register${params}`);
+  };
+
   return (
     <footer className="relative overflow-hidden">
 
       {/* =========================
-          TOP CTA SECTION
+          TOP CTA SECTION — from Discover Block 4
       ========================= */}
-      <section className="relative overflow-hidden bg-[#F5DEB3] py-24 px-6">
+      <div style={{ background: CHARCOAL }}>
+        <div
+          className="h-[2px] w-full"
+          style={{
+            background: `linear-gradient(90deg, transparent, ${GOLD}50, ${RUST}50, transparent)`,
+          }}
+        />
 
-        {/* Abstract blobs */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-[-10%] left-[5%] w-[240px] h-[240px] rounded-full bg-[#CC4125]/18 blur-3xl" />
-          <div className="absolute bottom-[-20%] right-[8%] w-[340px] h-[340px] rounded-full bg-[#20B2AA]/18 blur-3xl" />
-          <div className="absolute top-[20%] right-[25%] w-[180px] h-[180px] rounded-full bg-[#36454F]/10 blur-2xl" />
+        <div className="relative overflow-hidden">
+          <div className="absolute inset-0">
+            <Image
+              src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=2000&auto=format&fit=crop"
+              alt="City of Fate"
+              fill
+              className="object-cover"
+              style={{ filter: "brightness(0.18)" }}
+            />
+          </div>
+
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(to bottom, ${CHARCOAL} 0%, transparent 20%, transparent 80%, ${CHARCOAL} 100%)`,
+            }}
+          />
+
+          <div
+            className="absolute inset-0"
+            style={{ background: `linear-gradient(135deg, ${GOLD}12 0%, transparent 50%)` }}
+          />
+
+          <div
+            className={`${quicksand.className} relative max-w-[1300px] mx-auto px-6 md:px-12 lg:px-16 flex flex-col gap-10`}
+            style={{ paddingTop: "6rem", paddingBottom: "6rem" }}
+          >
+            <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between gap-10">
+              <div className="max-w-xl">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-6 h-px" style={{ background: GOLD }} />
+                  <span
+                    className="text-sm uppercase tracking-[0.35em]"
+                    style={{ color: `${GOLD}AA`, fontWeight: 700 }}
+                  >
+                    Plan Your Visit
+                  </span>
+                </div>
+
+                <h2
+                  className="leading-[0.92]"
+                  style={{ fontSize: "clamp(2.6rem, 6vw, 4.8rem)", color: CREAM, fontWeight: 700 }}
+                >
+                  Come experience <br />
+                  <span style={{ color: RUST }}>Fate for yourself.</span>
+                </h2>
+
+                <p
+                  className="leading-relaxed mt-6"
+                  style={{ fontSize: "1rem", color: "rgba(245,222,179,0.5)", maxWidth: "36ch", fontWeight: 400 }}
+                >
+                  Register now to get early access to events, curated itineraries,
+                  and exclusive experiences available only in Fate.
+                </p>
+              </div>
+
+              <div
+                className="w-full lg:w-auto lg:min-w-[340px] flex-shrink-0 relative p-8 rounded-[28px]"
+                style={{
+                  border: `1px solid ${GOLD}45`,
+                  background: "rgba(20,26,30,0.85)",
+                  backdropFilter: "blur(16px)",
+                  WebkitBackdropFilter: "blur(16px)",
+                }}
+              >
+                <p
+                  className="text-xs uppercase tracking-[0.25em] mb-2"
+                  style={{ color: `${GOLD}90`, fontWeight: 700 }}
+                >
+                  Free Registration
+                </p>
+
+                <h3
+                  className="leading-tight mb-1"
+                  style={{ fontSize: "1.6rem", color: CREAM, fontWeight: 700 }}
+                >
+                  Join Fate
+                </h3>
+
+                <p
+                  className="text-sm mb-7"
+                  style={{ color: "rgba(245,222,179,0.45)", fontWeight: 400 }}
+                >
+                  Get early access. No spam, ever.
+                </p>
+
+                <div className="relative mb-4">
+                  <input
+                    type="email"
+                    placeholder="Your email address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleRegister()}
+                    className="w-full bg-transparent text-sm outline-none rounded-full"
+                    style={{
+                      border: `1px solid rgba(32,178,170,0.3)`,
+                      padding: "14px 18px",
+                      color: CREAM,
+                      fontSize: "0.94rem",
+                    }}
+                  />
+                </div>
+
+                <RegisterButton onClick={handleRegister} />
+
+                <p
+                  className="text-xs mt-4 text-center"
+                  style={{ color: "rgba(245,222,179,0.25)", fontWeight: 400 }}
+                >
+                  By registering you agree to our Terms & Privacy Policy
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="relative z-10 max-w-6xl mx-auto text-center">
-          <p className={`text-[#CC4125] text-3xl md:text-4xl mb-4 ${quicksand.className}`}>
-            Stay Connected
-          </p>
-         <h2
-  className={`${quicksand.className} text-[#111111] text-5xl md:text-7xl font-bold uppercase leading-[0.9] tracking-[-0.05em] mb-10`}
->
-  BECOME A
-  <br />
-  FATE INSIDER
-</h2>
-          <button className="
-            inline-flex items-center justify-center
-            h-14 px-10
-            bg-[#111111] text-white
-            uppercase tracking-[0.18em] text-sm font-semibold
-            hover:bg-[#20B2AA]
-            transition-all duration-300
-          ">
-            Sign Up
-          </button>
-        </div>
-      </section>
+        <div
+          className="h-px"
+          style={{
+            background: "linear-gradient(90deg, transparent, #20B2AA40, #CC412540, transparent)",
+          }}
+        />
+      </div>
 
       {/* =========================
           MAIN FOOTER
@@ -80,10 +231,10 @@ export default function Footer() {
             <div className="flex flex-col items-center">
               <Link href="/" className="inline-block">
                 <h2
-  className={`${quicksand.className} text-[#20B2AA] text-7xl md:text-8xl font-bold uppercase tracking-[-0.06em] leading-none`}
->
-  FATE
-</h2>
+                  className={`${quicksand.className} text-[#20B2AA] text-7xl md:text-8xl font-bold uppercase tracking-[-0.06em] leading-none`}
+                >
+                  FATE
+                </h2>
               </Link>
               <p className={`text-white/60 mt-5 max-w-md text-xl md:text-2xl leading-relaxed ${quicksand.className}`}>
                 Discover restaurants, nightlife, shopping,
@@ -151,10 +302,9 @@ export default function Footer() {
 
           {/* BOTTOM ROW */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5 mt-14 pt-8 border-t border-white/10">
-
             <div className={`flex items-center justify-center md:justify-start gap-3 text-white/45 text-lg ${quicksand.className}`}>
               <MapPin size={15} />
-              <p>  ©2026 Visit Fate – All Rights Reserved  ©2026 Live Well, Live Fate!  - All Rights Reserved. </p>
+              <p>©2026 Visit Fate – All Rights Reserved  ©2026 Live Well, Live Fate! - All Rights Reserved.</p>
             </div>
 
             <div className="flex items-center justify-center md:justify-end gap-8">
@@ -168,7 +318,6 @@ export default function Footer() {
                 </Link>
               ))}
             </div>
-
           </div>
         </div>
       </section>

@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
 import {
   ArrowUpRight,
   Wifi,
@@ -17,6 +16,9 @@ import {
 } from "lucide-react";
 
 import { Quicksand } from "next/font/google";
+import {
+  motion,
+} from "framer-motion";
 
 const quicksand = Quicksand({
   subsets: ["latin"],
@@ -139,10 +141,10 @@ const amenities = [
 ];
 
 // ─── Palette ──────────────────────────────────────────────────────────────────
-const GOLD     = "#20B2AA";
+const TEAL     = "#20B2AA";
 const RUST     = "#CC4125";
-const CREAM    = "#F5DEB3";
-const CHARCOAL = "#1E2328";
+const GOLD     = "#FDEB3";   // used as accent in amenities
+const CHARCOAL = "#36454F";
 const WHITE    = "#FFFFFF";
 
 // ─── Social Icons ─────────────────────────────────────────────────────────────
@@ -202,187 +204,80 @@ const socialLinks = [
   },
 ];
 
-function SocialLinkRow({ link, isLast }: { link: typeof socialLinks[0]; isLast: boolean }) {
-  const [hovered, setHovered] = useState(false);
-
-  return (
-    <>
-      <a
-        href={link.href}
-        target="_blank"
-        rel="noopener noreferrer"
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        className="group flex items-center justify-between py-6 gap-6"
-        style={{ textDecoration: "none", transition: "all 200ms ease" }}
-      >
-        {/* Left: number + icon + text */}
-        <div className="flex items-center gap-6 min-w-0">
-          <span
-            className={`${quicksand.className} tabular-nums flex-shrink-0`}
-            style={{
-              fontSize: "0.75rem",
-              fontWeight: 600,
-              letterSpacing: "0.18em",
-              color: hovered ? GOLD : "rgba(30,35,40,0.3)",
-              transition: "color 250ms ease",
-            }}
-          >
-            {link.index}
-          </span>
-
-          <div
-            className="flex-shrink-0 flex items-center justify-center rounded-full"
-            style={{
-              width: "44px",
-              height: "44px",
-              border: `1px solid ${hovered ? GOLD : "rgba(30,35,40,0.15)"}`,
-              background: hovered ? `${GOLD}12` : "transparent",
-              color: hovered ? GOLD : "rgba(30,35,40,0.5)",
-              transition: "all 300ms ease",
-            }}
-          >
-            {link.icon}
-          </div>
-
-          <div className="min-w-0">
-            <p
-              className={`${quicksand.className}`}
-              style={{
-                fontSize: "1.15rem",
-                fontWeight: 700,
-                color: hovered ? CHARCOAL : "rgba(30,35,40,0.75)",
-                transition: "color 250ms ease",
-                letterSpacing: "-0.01em",
-              }}
-            >
-              {link.label}
-            </p>
-            <p
-              className={`${quicksand.className}`}
-              style={{
-                fontSize: "0.82rem",
-                fontWeight: 400,
-                color: "rgba(30,35,40,0.4)",
-                marginTop: "1px",
-              }}
-            >
-              {link.desc}
-            </p>
-          </div>
-        </div>
-
-        {/* Right: handle + arrow */}
-        <div className="flex items-center gap-4 flex-shrink-0">
-          <span
-            className={`${quicksand.className} hidden sm:block`}
-            style={{
-              fontSize: "0.85rem",
-              fontWeight: 600,
-              color: hovered ? GOLD : "rgba(30,35,40,0.35)",
-              letterSpacing: "0.04em",
-              transition: "color 250ms ease",
-            }}
-          >
-            {link.handle}
-          </span>
-
-          <div
-            className="flex items-center justify-center rounded-full flex-shrink-0"
-            style={{
-              width: "36px",
-              height: "36px",
-              background: hovered ? GOLD : "transparent",
-              border: `1px solid ${hovered ? GOLD : "rgba(30,35,40,0.15)"}`,
-              transition: "all 300ms ease",
-            }}
-          >
-            <ArrowUpRight
-              style={{
-                width: "15px",
-                height: "15px",
-                color: hovered ? "#0D1B24" : "rgba(30,35,40,0.4)",
-                transform: hovered ? "translate(1px, -1px)" : "none",
-                transition: "all 250ms ease",
-              }}
-            />
-          </div>
-        </div>
-      </a>
-
-      {!isLast && (
-        <div style={{ height: "1px", background: "rgba(30,35,40,0.08)" }} />
-      )}
-    </>
-  );
-}
-
 function SocialSection() {
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+
   return (
     <div style={{ background: WHITE }}>
       <div
         className="max-w-[1300px] mx-auto px-6 md:px-12 lg:px-16"
-        style={{ paddingTop: "5rem", paddingBottom: "5rem" }}
+        style={{ paddingTop: "1.75rem", paddingBottom: "1.75rem" }}
       >
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-          <div>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-6 h-px" style={{ background: GOLD }} />
-              <span
-                className={`${quicksand.className} text-sm uppercase tracking-[0.35em]`}
-                style={{ color: GOLD, fontWeight: 700 }}
-              >
-                Follow Along
-              </span>
-            </div>
-
-            <h2
-              className={`${quicksand.className} leading-[0.94]`}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          {/* Left: tiny label */}
+          <div className="flex items-center gap-3">
+            <div className="w-4 h-px flex-shrink-0" style={{ background: "rgba(204,65,37,0.5)" }} />
+            <span
+              className={quicksand.className}
               style={{
-                fontSize: "clamp(2rem, 4vw, 3rem)",
-                color: CHARCOAL,
+                fontSize: "0.78rem",
                 fontWeight: 700,
+                letterSpacing: "0.06em",
+                color: "rgba(80,30,15,0.6)",
               }}
             >
-              Stay connected
-              <br />
-              <span style={{ color: "rgba(30,35,40,0.32)" }}>wherever you are.</span>
-            </h2>
+              Follow Fate on
+            </span>
           </div>
 
-          <p
-            className={`${quicksand.className}`}
-            style={{
-              fontSize: "0.95rem",
-              color: "rgba(30,35,40,0.5)",
-              fontWeight: 400,
-              maxWidth: "32ch",
-              lineHeight: 1.7,
-            }}
-          >
-            Join the Fate community across platforms — real-time updates, local stories, and everything in between.
-          </p>
+          {/* Right: icon pills */}
+          <div className="flex items-center gap-2">
+            {socialLinks.map((link, i) => (
+              <a
+                key={link.label}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                onMouseEnter={() => setHoveredIdx(i)}
+                onMouseLeave={() => setHoveredIdx(null)}
+                title={link.label}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "7px",
+                  padding: "7px 14px 7px 10px",
+                  borderRadius: "100px",
+                  border: `1px solid ${hoveredIdx === i ? RUST : "rgba(204,65,37,0.25)"}`,
+                  background: hoveredIdx === i ? RUST : "rgba(255,255,255,0.35)",
+                  color: hoveredIdx === i ? WHITE : CHARCOAL,
+                  textDecoration: "none",
+                  transition: "all 220ms ease",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                <span style={{ display: "flex", flexShrink: 0 }}>{link.icon}</span>
+                <span
+                  className={quicksand.className}
+                  style={{
+                    fontSize: "0.78rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.02em",
+                    color: hoveredIdx === i ? WHITE : "rgba(30,35,40,0.75)",
+                    transition: "color 220ms ease",
+                  }}
+                >
+                  {link.handle}
+                </span>
+              </a>
+            ))}
+          </div>
         </div>
-
-        {/* Divider */}
-        <div style={{ height: "1px", background: "rgba(30,35,40,0.1)", marginBottom: "0" }} />
-
-        {/* Link rows */}
-        <div>
-          {socialLinks.map((link, i) => (
-            <SocialLinkRow key={link.label} link={link} isLast={i === socialLinks.length - 1} />
-          ))}
-        </div>
-
-        {/* Bottom divider */}
-        <div style={{ height: "1px", background: "rgba(30,35,40,0.1)", marginTop: "0" }} />
       </div>
     </div>
   );
 }
 
-// ─── Accordion Slice (one image strip in the right panel) ────────────────────
+// ─── Accordion Slice ──────────────────────────────────────────────────────────
 
 function AccordionSlice({
   cat,
@@ -416,30 +311,28 @@ function AccordionSlice({
         cursor: "pointer",
         flex: isActive ? "5 1 0%" : "1 1 0%",
         transition: "flex 650ms cubic-bezier(.16,1,.3,1)",
-        borderRadius: isFirst ? "20px 0 0 20px" : isLast ? "0 20px 20px 0" : "0",
+        borderRadius: "0",
         minWidth: 0,
       }}
     >
-      {/* Photo */}
       <Image
         src={cat.image}
         alt={cat.title}
         fill
         className="object-cover"
         style={{
-          transform: isActive ? "scale(1.04)" : "scale(1.12)",
+          transform: isActive ? "scale(1.02)" : "scale(1.08)",
           transition: "transform 700ms cubic-bezier(.16,1,.3,1)",
           objectPosition: "center",
         }}
       />
 
-      {/* Base darkening */}
       <div
         style={{
           position: "absolute", inset: 0,
           background: isActive
-            ? "linear-gradient(to top, rgba(10,18,24,0.82) 0%, rgba(10,18,24,0.1) 45%, transparent 70%)"
-            : "linear-gradient(to top, rgba(10,18,24,0.75) 0%, rgba(10,18,24,0.55) 60%, rgba(10,18,24,0.35) 100%)",
+            ? "linear-gradient(to top, rgba(10,18,24,0.72) 0%, rgba(10,18,24,0.05) 35%, transparent 55%)"
+            : "linear-gradient(to top, rgba(10,18,24,0.5) 0%, transparent 40%)",
           transition: "background 500ms ease",
         }}
       />
@@ -447,14 +340,14 @@ function AccordionSlice({
       {/* Teal top-edge glow when active */}
       <div
         style={{
-          position: "absolute", top: 0, left: 0, right: 0, height: "2px",
-          background: `linear-gradient(to right, transparent, ${GOLD}, transparent)`,
+          position: "absolute", top: 0, left: 0, right: 0, height: "3px",
+          background: `linear-gradient(to right, transparent, ${TEAL}, transparent)`,
           opacity: isActive ? 1 : 0,
           transition: "opacity 400ms ease",
         }}
       />
 
-      {/* ── COLLAPSED STATE: rotated label ── */}
+      {/* Collapsed rotated label */}
       <div
         style={{
           position: "absolute",
@@ -477,7 +370,8 @@ function AccordionSlice({
             fontWeight: 700,
             letterSpacing: "0.2em",
             textTransform: "uppercase",
-            color: "rgba(245,222,179,0.45)",
+            color: "rgba(255,255,255,0.55)",
+            textShadow: "0 1px 6px rgba(0,0,0,0.6)",
           }}
         >
           {cat.number}
@@ -488,18 +382,19 @@ function AccordionSlice({
             fontSize: "0.72rem",
             fontWeight: 600,
             letterSpacing: "0.06em",
-            color: "rgba(245,222,179,0.6)",
+            color: "rgba(255,255,255,0.75)",
+            textShadow: "0 1px 6px rgba(0,0,0,0.6)",
           }}
         >
           {cat.title}
         </span>
       </div>
 
-      {/* ── ACTIVE STATE: full content ── */}
+      {/* Active content overlay */}
       <div
         style={{
           position: "absolute", bottom: 0, left: 0, right: 0,
-          padding: "0 22px 22px",
+          padding: `0 22px 26px ${isFirst ? "clamp(1.5rem, 4vw, 4rem)" : "22px"}`,
           opacity: isActive ? 1 : 0,
           transform: isActive ? "translateY(0)" : "translateY(10px)",
           transition: "opacity 400ms ease 150ms, transform 450ms cubic-bezier(.16,1,.3,1) 150ms",
@@ -512,80 +407,87 @@ function AccordionSlice({
             display: "inline-flex",
             alignItems: "center",
             gap: "6px",
-            background: `${GOLD}22`,
-            border: `1px solid ${GOLD}50`,
+            background: `${TEAL}28`,
+            border: `1px solid ${TEAL}60`,
             borderRadius: "100px",
             padding: "4px 12px",
             marginBottom: "10px",
+            backdropFilter: "blur(8px)",
           }}
         >
-          <span style={{ width: "4px", height: "4px", borderRadius: "50%", background: GOLD, display: "inline-block", flexShrink: 0 }} />
+          <span style={{ width: "4px", height: "4px", borderRadius: "50%", background: TEAL, display: "inline-block", flexShrink: 0 }} />
           <span
             className={quicksand.className}
-            style={{ color: GOLD, fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase" }}
+            style={{ color: TEAL, fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase" }}
           >
             {cat.tag}
           </span>
         </div>
 
-        {/* Title */}
         <h3
           className={quicksand.className}
           style={{
             fontSize: "clamp(1.4rem, 2vw, 1.85rem)",
             fontWeight: 700,
-            color: CREAM,
+            color: WHITE,
             lineHeight: 1.05,
             letterSpacing: "-0.01em",
             marginBottom: "8px",
-            textShadow: "0 2px 16px rgba(0,0,0,0.5)",
+            textShadow: "0 2px 12px rgba(0,0,0,0.4)",
           }}
         >
           {cat.title}
         </h3>
 
-        {/* Description */}
         <p
           className={quicksand.className}
           style={{
             fontSize: "0.82rem",
-            color: "rgba(245,222,179,0.6)",
+            color: "rgba(255,255,255,0.75)",
             fontWeight: 400,
             lineHeight: 1.6,
             marginBottom: "16px",
             maxWidth: "28ch",
+            textShadow: "0 1px 6px rgba(0,0,0,0.4)",
           }}
         >
           {cat.description}
         </p>
 
-        {/* CTA */}
+        {/* ── Standardised CTA button (teal fill → rust hover slide-in) ── */}
         <Link
           href={cat.href}
           onClick={(e) => e.stopPropagation()}
           onMouseEnter={() => setBtnHovered(true)}
           onMouseLeave={() => setBtnHovered(false)}
+          className="group relative inline-flex items-center justify-center overflow-hidden"
           style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "7px",
-            padding: "0 18px",
             height: "40px",
-            borderRadius: "100px",
-            background: btnHovered ? "#1A9E97" : GOLD,
+            padding: "0 18px",
+            background: TEAL,
             color: "#0D1B24",
             fontWeight: 700,
             fontSize: "0.73rem",
-            letterSpacing: "0.1em",
+            letterSpacing: "0.18em",
             textTransform: "uppercase",
             textDecoration: "none",
-            transition: "background 220ms ease, box-shadow 220ms ease",
-            boxShadow: btnHovered ? `0 0 24px ${GOLD}55` : "none",
+            gap: "7px",
             whiteSpace: "nowrap",
           }}
         >
-          <span className={quicksand.className}>Explore</span>
-          <ArrowUpRight style={{ width: "13px", height: "13px", flexShrink: 0 }} />
+          {/* Rust slide-in hover fill */}
+          <span
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: RUST,
+              transform: btnHovered ? "scaleX(1)" : "scaleX(0)",
+              transformOrigin: "left",
+              transition: "transform 500ms cubic-bezier(.16,1,.3,1)",
+            }}
+          />
+          <span className={quicksand.className} style={{ position: "relative", zIndex: 1, color: btnHovered ? WHITE : "#0D1B24", transition: "color 300ms ease" }}>Explore</span>
+          <ArrowUpRight style={{ position: "relative", zIndex: 1, width: "13px", height: "13px", flexShrink: 0, color: btnHovered ? WHITE : "#0D1B24", transition: "color 300ms ease" }} />
         </Link>
       </div>
 
@@ -594,8 +496,8 @@ function AccordionSlice({
         style={{
           position: "absolute", top: "14px", right: "14px",
           width: "16px", height: "16px",
-          borderTop: `1.5px solid ${GOLD}`,
-          borderRight: `1.5px solid ${GOLD}`,
+          borderTop: `1.5px solid ${TEAL}`,
+          borderRight: `1.5px solid ${TEAL}`,
           opacity: isActive ? 0.7 : 0,
           transition: "opacity 350ms ease 100ms",
           pointerEvents: "none",
@@ -605,7 +507,7 @@ function AccordionSlice({
   );
 }
 
-// ─── Discover Block (Split-Screen Editorial) ──────────────────────────────────
+// ─── Discover Block ───────────────────────────────────────────────────────────
 
 function DiscoverBlock({
   active,
@@ -621,7 +523,8 @@ function DiscoverBlock({
   const cat = categories[active];
   const [animating, setAnimating] = useState(false);
   const [prevActive, setPrevActive] = useState(active);
-  const [discoverHovered, setDiscoverHovered] = useState(false);
+  const [exploreHovered, setExploreHovered] = useState(false);
+  const [eventsHovered, setEventsHovered] = useState(false);
 
   useEffect(() => {
     if (active !== prevActive) {
@@ -635,217 +538,32 @@ function DiscoverBlock({
   }, [active, prevActive]);
 
   return (
-    <div
-      style={{
-        background: CHARCOAL,
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
-      {/* Grain texture overlay */}
-      <div
-        className="absolute inset-0 pointer-events-none z-10"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")`,
-          opacity: 0.035,
-          mixBlendMode: "overlay",
-        }}
-      />
-
-      {/* Teal glow blob */}
+    <div style={{ background: WHITE, position: "relative", overflow: "hidden" }}>
+      {/* Subtle teal glow blob */}
       <div
         className="absolute pointer-events-none z-0"
         style={{
           width: "600px",
           height: "600px",
           borderRadius: "50%",
-          background: `radial-gradient(circle, ${GOLD}22 0%, transparent 70%)`,
+          background: `radial-gradient(circle, ${TEAL}10 0%, transparent 70%)`,
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          transition: "all 1000ms cubic-bezier(.16,1,.3,1)",
-          filter: "blur(40px)",
+          filter: "blur(60px)",
         }}
       />
 
-      {/* Section label bar */}
-      <div className="relative z-20 max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16" style={{ paddingTop: "6rem", paddingBottom: "2rem" }}>
-        <div className="flex items-center gap-3">
-          <div style={{ width: "28px", height: "1px", background: GOLD }} />
-          <span
-            className={quicksand.className}
-            style={{ color: `${GOLD}BB`, fontWeight: 700, fontSize: "0.75rem", letterSpacing: "0.38em", textTransform: "uppercase" }}
-          >
-            Discover the City
-          </span>
-          <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.06)" }} />
-          <span
-            className={quicksand.className}
-            style={{ color: "rgba(245,222,179,0.2)", fontWeight: 500, fontSize: "0.72rem", letterSpacing: "0.12em" }}
-          >
-            {String(active + 1).padStart(2, "0")} — {String(categories.length).padStart(2, "0")}
-          </span>
-        </div>
-      </div>
-
-      {/* ── TITLE BLOCK — centered, animates on change ── */}
-      <div
-        className="relative z-20"
-        style={{
-          textAlign: "center",
-          padding: "0 clamp(1.5rem, 4vw, 4rem)",
-          paddingBottom: "2.5rem",
-        }}
-      >
-        {/* Tag pill + number */}
-        <div
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "10px",
-            marginBottom: "1.2rem",
-            opacity: animating ? 0 : 1,
-            transform: animating ? "translateY(6px)" : "translateY(0)",
-            transition: "opacity 350ms ease, transform 350ms ease",
-          }}
-        >
-          <span
-            className={quicksand.className}
-            style={{
-              color: "rgba(245,222,179,0.25)",
-              fontSize: "0.72rem",
-              fontWeight: 600,
-              letterSpacing: "0.18em",
-            }}
-          >
-            {cat.number}
-          </span>
-          <span
-            style={{
-              width: "3px", height: "3px", borderRadius: "50%",
-              background: `${GOLD}60`, display: "inline-block",
-            }}
-          />
-          <span
-            className={quicksand.className}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "6px",
-              background: `${GOLD}18`,
-              border: `1px solid ${GOLD}45`,
-              borderRadius: "100px",
-              padding: "4px 14px",
-              fontSize: "0.68rem",
-              fontWeight: 700,
-              color: GOLD,
-              letterSpacing: "0.2em",
-              textTransform: "uppercase",
-            }}
-          >
-            <span style={{ width: "4px", height: "4px", borderRadius: "50%", background: GOLD, display: "inline-block" }} />
-            {cat.tag}
-          </span>
-        </div>
-
-        {/* Giant animated title */}
-        <h2
-          className={quicksand.className}
-          style={{
-            fontSize: "clamp(3.2rem, 6.5vw, 6rem)",
-            fontWeight: 700,
-            lineHeight: 0.88,
-            letterSpacing: "-0.025em",
-            marginBottom: "1.2rem",
-            opacity: animating ? 0 : 1,
-            transform: animating ? "translateY(14px)" : "translateY(0)",
-            transition: "opacity 420ms ease 50ms, transform 480ms cubic-bezier(.16,1,.3,1) 50ms",
-          }}
-        >
-          {cat.title.split(" ").map((word, wi, arr) => (
-            <span
-              key={wi}
-              style={{
-                display: "inline",
-                marginRight: wi < arr.length - 1 ? "0.25em" : 0,
-                color: wi === arr.length - 1 ? "transparent" : CREAM,
-                WebkitTextStroke: wi === arr.length - 1 ? `1.5px ${CREAM}` : "none",
-              }}
-            >
-              {word}
-            </span>
-          ))}
-        </h2>
-
-        {/* Description + CTA row */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "2rem",
-            flexWrap: "wrap",
-            opacity: animating ? 0 : 1,
-            transform: animating ? "translateY(8px)" : "translateY(0)",
-            transition: "opacity 380ms ease 100ms, transform 440ms cubic-bezier(.16,1,.3,1) 100ms",
-          }}
-        >
-          <p
-            className={quicksand.className}
-            style={{
-              fontSize: "0.95rem",
-              color: "rgba(245,222,179,0.48)",
-              fontWeight: 400,
-              lineHeight: 1.65,
-              maxWidth: "48ch",
-            }}
-          >
-            {cat.description}
-          </p>
-
-          <Link
-            href={cat.href}
-            onMouseEnter={() => setDiscoverHovered(true)}
-            onMouseLeave={() => setDiscoverHovered(false)}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "8px",
-              flexShrink: 0,
-              padding: "0 24px",
-              height: "48px",
-              borderRadius: "100px",
-              background: discoverHovered ? "#1A9E97" : GOLD,
-              color: "#0D1B24",
-              fontWeight: 700,
-              fontSize: "0.78rem",
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-              textDecoration: "none",
-              transition: "background 220ms ease, box-shadow 220ms ease, transform 200ms ease",
-              boxShadow: discoverHovered ? `0 0 28px ${GOLD}55` : "none",
-              transform: discoverHovered ? "translateY(-1px)" : "none",
-              whiteSpace: "nowrap",
-            }}
-          >
-            <span className={quicksand.className}>Explore Now</span>
-            <ArrowUpRight style={{ width: "15px", height: "15px" }} />
-          </Link>
-        </div>
-      </div>
+ 
 
       {/* Full-width accordion */}
-      <div
-        className="relative z-20"
-        style={{ padding: "0 clamp(1.5rem, 4vw, 4rem)", paddingBottom: "5rem" }}
-      >
+      <div className="relative z-20">
         <div
           style={{
             width: "100%",
-            height: "clamp(480px, 68vh, 780px)",
+            height: "clamp(560px, 80vh, 920px)",
             display: "flex",
-            gap: "4px",
-            borderRadius: "24px",
+            gap: "3px",
             overflow: "hidden",
           }}
         >
@@ -864,39 +582,164 @@ function DiscoverBlock({
           ))}
         </div>
       </div>
+
+           {/* ── STANDARDISED SECTION HEADING ── */}
+      <div
+        className="relative z-20 max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16"
+        style={{ paddingTop: "0", paddingBottom: "0" }}
+      >
+
+      <motion.div
+  initial={{ y: -100, opacity: 0 }}
+  whileInView={{ y: 0, opacity: 1 }}
+  viewport={{ once: true }}
+  transition={{
+    duration: 0.8,
+    ease: [0.22, 1, 0.36, 1],
+  }}
+  className="w-full bg-[#20B2AA]"
+>
+  <div className="max-w-4xl mx-auto text-center px-6 py-12">
+          {/* Eyebrow row — dot + counter + label */}
+         <div className="flex items-center justify-center gap-3">
+            <span
+              className="h-2 w-2 rounded-full flex-shrink-0"
+              style={{ background: TEAL }}
+            />
+            <p
+              className={`text-sm sm:text-base uppercase tracking-[0.25em] sm:tracking-[0.35em] ${quicksand.className}`}
+              style={{ color: "rgba(0,0,0,0.45)" }}
+            >
+              Discover the City
+            </p>
+            {/* Live counter — keeps original feature */}
+            <span
+              className={quicksand.className}
+              style={{
+                marginLeft: "0",
+                color: "rgba(30,35,40,0.3)",
+                fontWeight: 500,
+                fontSize: "0.72rem",
+                letterSpacing: "0.12em",
+                opacity: animating ? 0 : 1,
+                transition: "opacity 300ms ease",
+              }}
+            >
+              {String(active + 1).padStart(2, "0")} — {String(categories.length).padStart(2, "0")}
+            </span>
+          </div>
+
+          {/* ── ANIMATED GIANT TITLE (preserves existing animation logic) ── */}
+          <h2
+            className={`mt-4 text-4xl sm:text-5xl font-black uppercase leading-[0.95] md:text-7xl ${quicksand.className}`}
+            style={{
+              color: "#111111",
+              opacity: animating ? 0 : 1,
+              transform: animating ? "translateY(14px)" : "translateY(0)",
+              transition: "opacity 420ms ease 50ms, transform 480ms cubic-bezier(.16,1,.3,1) 50ms",
+            }}
+          >
+            {cat.title.split(" ").map((word, wi, arr) => (
+              <span
+                key={wi}
+                style={{
+                  display: "inline",
+                  marginRight: wi < arr.length - 1 ? "0.25em" : 0,
+                  // Last word gets outline style for visual punch
+                  color: wi === arr.length - 1 ? "transparent" : "#111111",
+                  WebkitTextStroke: wi === arr.length - 1 ? "2px #111111" : "none",
+                }}
+              >
+                {word}
+              </span>
+            ))}
+          </h2>
+
+          {/* Gradient bar */}
+         <div
+  className="mt-4 h-[3px] w-20 sm:w-24 rounded-full mx-auto"
+  style={{
+    background: `linear-gradient(to right, ${TEAL}, ${RUST}, transparent)`,
+  }}
+/>
+
+          {/* Description — animates with title */}
+          <p
+            className={`mt-5 sm:mt-6 text-xl sm:text-2xl leading-relaxed ${quicksand.className}`}
+            style={{
+              color: "rgba(0,0,0,0.6)",
+              opacity: animating ? 0 : 1,
+              transform: animating ? "translateY(8px)" : "translateY(0)",
+              transition: "opacity 380ms ease 100ms, transform 440ms cubic-bezier(.16,1,.3,1) 100ms",
+            }}
+          >
+            {cat.description}
+          </p>
+
+          {/* ── STANDARDISED BUTTONS ── */}
+        <div
+  className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 md:gap-5 mt-8"
+            style={{
+              opacity: animating ? 0 : 1,
+              transition: "opacity 380ms ease 120ms",
+            }}
+          >
+            {/* Primary: dark fill → teal slide-in */}
+            <Link
+              href={cat.href}
+              onMouseEnter={() => setExploreHovered(true)}
+              onMouseLeave={() => setExploreHovered(false)}
+              className={`group relative inline-flex items-center justify-center overflow-hidden h-12 md:h-14 px-7 md:px-8 ${quicksand.className}`}
+              style={{
+                background: "#111111",
+                color: WHITE,
+                textTransform: "uppercase",
+                letterSpacing: "0.18em",
+                fontSize: "0.75rem",
+                fontWeight: 600,
+                textDecoration: "none",
+                gap: "8px",
+              }}
+            >
+              <span
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background: TEAL,
+                  transform: exploreHovered ? "scaleX(1)" : "scaleX(0)",
+                  transformOrigin: "left",
+                  transition: "transform 500ms cubic-bezier(.16,1,.3,1)",
+                }}
+              />
+              <span style={{ position: "relative", zIndex: 1 }}>Explore More</span>
+            </Link>
+
+            {/* Secondary: charcoal border → fills dark */}
+            <Link
+              href="/events"
+              onMouseEnter={() => setEventsHovered(true)}
+              onMouseLeave={() => setEventsHovered(false)}
+              className={`inline-flex items-center justify-center h-12 md:h-14 px-7 md:px-8 ${quicksand.className}`}
+              style={{
+                border: `1px solid #111111`,
+                color: eventsHovered ? WHITE : "#111111",
+                background: eventsHovered ? "#111111" : "transparent",
+                textTransform: "uppercase",
+                letterSpacing: "0.18em",
+                fontSize: "0.75rem",
+                fontWeight: 600,
+                textDecoration: "none",
+                transition: "all 300ms ease",
+              }}
+            >
+              View Events
+            </Link>
+          </div>
+        </div>
+        </motion.div>
+      </div>
     </div>
-  );
-}
-
-// ─── Register Button ──────────────────────────────────────────────────────────
-
-function RegisterButton({ onClick }: { onClick: () => void }) {
-  const [hovered, setHovered] = useState(false);
-  return (
-    <button
-      onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      className="w-full flex items-center justify-between px-5 py-4 text-sm rounded-full cursor-pointer"
-      style={{
-        background: hovered ? "#1A9E97" : GOLD,
-        color: "#0D1B24",
-        letterSpacing: "0.04em",
-        fontWeight: 700,
-        border: "none",
-        transition: "background 300ms ease",
-      }}
-    >
-      <span>Register for Free</span>
-      <ArrowUpRight
-        style={{
-          width: "16px",
-          height: "16px",
-          transform: hovered ? "translate(1px, -1px)" : "translate(0, 0)",
-          transition: "transform 200ms ease",
-        }}
-      />
-    </button>
+    
   );
 }
 
@@ -936,10 +779,11 @@ function AmenityCard({ amenity }: { amenity: (typeof amenities)[0] }) {
         }}
       />
 
+      {/* Rust top edge glow on hover — differentiates from Discover's teal */}
       <div
         className="absolute top-0 left-0 right-0 h-[2px]"
         style={{
-          background: `linear-gradient(to right, transparent, ${GOLD}, transparent)`,
+          background: `linear-gradient(to right, transparent, ${RUST}, transparent)`,
           opacity: hovered ? 1 : 0,
           transition: "opacity 300ms ease",
         }}
@@ -948,8 +792,8 @@ function AmenityCard({ amenity }: { amenity: (typeof amenities)[0] }) {
       <div
         className="absolute top-4 left-4 w-5 h-5"
         style={{
-          borderTop: `1px solid ${GOLD}`,
-          borderLeft: `1px solid ${GOLD}`,
+          borderTop: `1px solid ${RUST}`,
+          borderLeft: `1px solid ${RUST}`,
           opacity: hovered ? 0.7 : 0,
           transition: "opacity 300ms ease",
         }}
@@ -960,7 +804,7 @@ function AmenityCard({ amenity }: { amenity: (typeof amenities)[0] }) {
           className={`${quicksand.className} leading-snug mb-2`}
           style={{
             fontSize: "0.78rem",
-            color: "rgba(245,222,179,0.65)",
+            color: "rgba(255,255,255,0.65)",
             fontWeight: 400,
             opacity: hovered ? 1 : 0,
             transform: hovered ? "translateY(0)" : "translateY(5px)",
@@ -975,7 +819,7 @@ function AmenityCard({ amenity }: { amenity: (typeof amenities)[0] }) {
             className={`${quicksand.className}`}
             style={{
               fontSize: "1rem",
-              color: CREAM,
+              color: WHITE,
               fontWeight: 700,
               letterSpacing: "0.01em",
               textShadow: "0 1px 8px rgba(0,0,0,0.8)",
@@ -989,13 +833,13 @@ function AmenityCard({ amenity }: { amenity: (typeof amenities)[0] }) {
             style={{
               width: "36px",
               height: "36px",
-              border: `1px solid ${GOLD}50`,
-              background: `${GOLD}20`,
+              border: `1px solid ${RUST}50`,
+              background: `${RUST}20`,
               opacity: hovered ? 1 : 0.8,
               transition: "opacity 300ms ease",
             }}
           >
-            <Icon style={{ width: "16px", height: "16px", color: GOLD }} />
+            <Icon style={{ width: "16px", height: "16px", color: RUST }} />
           </div>
         </div>
       </div>
@@ -1003,48 +847,107 @@ function AmenityCard({ amenity }: { amenity: (typeof amenities)[0] }) {
   );
 }
 
-// ─── Community Amenities — WHITE background ───────────────────────────────────
+// ─── Amenities Section ────────────────────────────────────────────────────────
 
 function AmenitiesSection() {
+  const [dirHovered, setDirHovered] = useState(false);
+  const [allHovered, setAllHovered] = useState(false);
+
   return (
     <div className="relative" style={{ background: WHITE }}>
-      <div className="max-w-[1300px] mx-auto px-6 md:px-12 lg:px-16" style={{ paddingTop: "5rem", paddingBottom: "5rem" }}>
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-6 h-px" style={{ background: GOLD }} />
-          <span
-            className={`${quicksand.className} text-sm uppercase tracking-[0.35em]`}
-            style={{ color: GOLD, fontWeight: 700 }}
-          >
-            Business directories
-          </span>
-        </div>
+      <div
+        className="max-w-[1300px] mx-auto px-6 md:px-12 lg:px-16"
+        style={{ paddingTop: "5rem", paddingBottom: "5rem" }}
+      >
+        {/* ── STANDARDISED SECTION HEADING ── */}
+        <div className="mb-10 sm:mb-16 max-w-3xl">
+          <div className="flex items-center gap-3">
+            {/* Rust dot — distinct from Discover's teal dot */}
+            <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ background: RUST }} />
+            <p
+              className={`text-sm sm:text-base uppercase tracking-[0.25em] sm:tracking-[0.35em] ${quicksand.className}`}
+              style={{ color: "rgba(0,0,0,0.45)" }}
+            >
+              Business Directories
+            </p>
+          </div>
 
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
           <h2
-            className={`${quicksand.className} leading-[0.94]`}
-            style={{
-              fontSize: "clamp(2.2rem, 4vw, 3.4rem)",
-              color: CHARCOAL,
-              fontWeight: 700,
-            }}
+            className={`mt-4 text-4xl sm:text-5xl font-black uppercase leading-[0.95] text-black md:text-7xl ${quicksand.className}`}
           >
-            Everything you need,
+            Everything
             <br />
-            <span style={{ color: "rgba(30,35,40,0.38)" }}>already here.</span>
+            <span style={{ color: "rgba(0,0,0,0.25)" }}>Already Here.</span>
           </h2>
 
-          <p
-            className={`${quicksand.className} lg:pb-2`}
+          {/* Gradient bar — rust-led to charcoal, distinct from Discover's teal-led */}
+          <div
+            className="mt-4 h-[3px] w-20 sm:w-24 rounded-full"
             style={{
-              fontSize: "0.95rem",
-              color: "rgba(30,35,40,0.5)",
-              fontWeight: 400,
-              maxWidth: "34ch",
+              background: `linear-gradient(to right, ${RUST}, ${CHARCOAL}, transparent)`,
             }}
+          />
+
+          <p
+            className={`mt-5 sm:mt-6 text-xl sm:text-2xl leading-relaxed ${quicksand.className}`}
+            style={{ color: "rgba(0,0,0,0.6)" }}
           >
-            Fate was built with community at its core. Every amenity exists to
-            make daily life extraordinary.
+            Fate was built with community at its core. Every business exists to
+            make daily life extraordinary — discover what's available in your district.
           </p>
+
+          {/* ── STANDARDISED BUTTONS — rust primary, charcoal border secondary ── */}
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3 md:gap-5 mt-8">
+            {/* Primary: rust fill → charcoal slide-in */}
+            <Link
+              href="/directory"
+              onMouseEnter={() => setDirHovered(true)}
+              onMouseLeave={() => setDirHovered(false)}
+              className={`group relative inline-flex items-center justify-center overflow-hidden h-12 md:h-14 px-7 md:px-8 ${quicksand.className}`}
+              style={{
+                background: RUST,
+                color: WHITE,
+                textTransform: "uppercase",
+                letterSpacing: "0.18em",
+                fontSize: "0.75rem",
+                fontWeight: 600,
+                textDecoration: "none",
+              }}
+            >
+              <span
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background: CHARCOAL,
+                  transform: dirHovered ? "scaleX(1)" : "scaleX(0)",
+                  transformOrigin: "left",
+                  transition: "transform 500ms cubic-bezier(.16,1,.3,1)",
+                }}
+              />
+              <span style={{ position: "relative", zIndex: 1 }}>Browse Directory</span>
+            </Link>
+
+            {/* Secondary: rust border → fills rust */}
+            <Link
+              href="/amenities"
+              onMouseEnter={() => setAllHovered(true)}
+              onMouseLeave={() => setAllHovered(false)}
+              className={`inline-flex items-center justify-center h-12 md:h-14 px-7 md:px-8 ${quicksand.className}`}
+              style={{
+                border: `1px solid ${RUST}`,
+                color: allHovered ? WHITE : RUST,
+                background: allHovered ? RUST : "transparent",
+                textTransform: "uppercase",
+                letterSpacing: "0.18em",
+                fontSize: "0.75rem",
+                fontWeight: 600,
+                textDecoration: "none",
+                transition: "all 300ms ease",
+              }}
+            >
+              View All 
+            </Link>
+          </div>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -1067,7 +970,12 @@ export default function DiscoverFateSection() {
   const [autoCard, setAutoCard] = useState<number>(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const active = clickedCard !== null ? clickedCard : hoveredCard !== null ? hoveredCard : autoCard;
+  const active =
+    clickedCard !== null
+      ? clickedCard
+      : hoveredCard !== null
+      ? hoveredCard
+      : autoCard;
 
   const startInterval = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
@@ -1104,40 +1012,28 @@ export default function DiscoverFateSection() {
     });
   };
 
-  const [email, setEmail] = useState("");
-  const router = useRouter();
-
-  const handleRegister = () => {
-    const params = email.trim()
-      ? `?email=${encodeURIComponent(email.trim())}`
-      : "";
-    router.push(`/register${params}`);
-  };
-
   return (
-  <section
-  className={`${quicksand.className} relative`}
-  style={{ backgroundColor: WHITE }}
->
-      {/* ── TOP RAINBOW RULE ── */}
+    <section
+      className={`${quicksand.className} relative`}
+      style={{ backgroundColor: WHITE }}
+    >
+      {/* Top rainbow rule */}
       <div className="absolute top-0 inset-x-0 z-30 pointer-events-none">
         <div
           className="h-[2px] w-full"
           style={{
-            background: "linear-gradient(90deg, #20B2AA 0%, #CC4125 50%, #F5DEB3 100%)",
+            background: `linear-gradient(90deg, ${TEAL} 0%, ${RUST} 50%, #F5DEB3 100%)`,
           }}
         />
         <div
           className="h-[42px] w-full opacity-40 blur-2xl"
           style={{
-            background: "linear-gradient(90deg, rgba(32,178,170,0.35) 0%, rgba(204,65,37,0.35) 50%, rgba(245,222,179,0.35) 100%)",
+            background: `linear-gradient(90deg, rgba(32,178,170,0.35) 0%, rgba(204,65,37,0.35) 50%, rgba(245,222,179,0.35) 100%)`,
           }}
         />
       </div>
 
-      {/* ══════════════════════════════════════════════════
-          BLOCK 1 — CHARCOAL: Discover Split-Screen
-      ══════════════════════════════════════════════════ */}
+      {/* BLOCK 1 — Discover Split-Screen */}
       <DiscoverBlock
         active={active}
         onEnter={handleEnter}
@@ -1145,150 +1041,11 @@ export default function DiscoverFateSection() {
         onToggle={handleToggle}
       />
 
-      {/* ══════════════════════════════════════════════════
-          BLOCK 2 — WHITE: Amenities
-      ══════════════════════════════════════════════════ */}
+      {/* BLOCK 2 — Amenities */}
       <AmenitiesSection />
 
-      {/* ══════════════════════════════════════════════════
-          BLOCK 3 — WHITE: Social Links
-      ══════════════════════════════════════════════════ */}
+      {/* BLOCK 3 — Social Links */}
       <SocialSection />
-
-      {/* ══════════════════════════════════════════════════
-          BLOCK 4 — CHARCOAL: CTA
-      ══════════════════════════════════════════════════ */}
-      <div style={{ background: CHARCOAL }}>
-        <div
-          className="h-[2px] w-full"
-          style={{
-            background: `linear-gradient(90deg, transparent, ${GOLD}50, ${RUST}50, transparent)`,
-          }}
-        />
-
-        <div className="relative overflow-hidden" style={{ marginTop: "0" }}>
-          <div className="absolute inset-0">
-            <Image
-              src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=2000&auto=format&fit=crop"
-              alt="City of Fate"
-              fill
-              className="object-cover"
-              style={{ filter: "brightness(0.18)" }}
-            />
-          </div>
-
-          <div
-            className="absolute inset-0"
-            style={{
-              background: `linear-gradient(to bottom, ${CHARCOAL} 0%, transparent 20%, transparent 80%, ${CHARCOAL} 100%)`,
-            }}
-          />
-
-          <div
-            className="absolute inset-0"
-            style={{ background: `linear-gradient(135deg, ${GOLD}12 0%, transparent 50%)` }}
-          />
-
-          <div
-            className="relative max-w-[1300px] mx-auto px-6 md:px-12 lg:px-16 flex flex-col gap-10"
-            style={{ paddingTop: "6rem", paddingBottom: "6rem" }}
-          >
-            <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between gap-10">
-              <div className="max-w-xl">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-6 h-px" style={{ background: GOLD }} />
-                  <span
-                    className="text-sm uppercase tracking-[0.35em]"
-                    style={{ color: `${GOLD}AA`, fontWeight: 700 }}
-                  >
-                    Plan Your Visit
-                  </span>
-                </div>
-
-                <h2
-                  className="leading-[0.92]"
-                  style={{ fontSize: "clamp(2.6rem, 6vw, 4.8rem)", color: CREAM, fontWeight: 700 }}
-                >
-                  Come experience <br />
-                  <span style={{ color: RUST }}>Fate for yourself.</span>
-                </h2>
-
-                <p
-                  className="leading-relaxed mt-6"
-                  style={{ fontSize: "1rem", color: "rgba(245,222,179,0.5)", maxWidth: "36ch", fontWeight: 400 }}
-                >
-                  Register now to get early access to events, curated itineraries,
-                  and exclusive experiences available only in Fate.
-                </p>
-              </div>
-
-              <div
-                className="w-full lg:w-auto lg:min-w-[340px] flex-shrink-0 relative p-8 rounded-[28px]"
-                style={{
-                  border: `1px solid ${GOLD}45`,
-                  background: "rgba(20,26,30,0.85)",
-                  backdropFilter: "blur(16px)",
-                  WebkitBackdropFilter: "blur(16px)",
-                }}
-              >
-                <p
-                  className="text-xs uppercase tracking-[0.25em] mb-2"
-                  style={{ color: `${GOLD}90`, fontWeight: 700 }}
-                >
-                  Free Registration
-                </p>
-
-                <h3
-                  className="leading-tight mb-1"
-                  style={{ fontSize: "1.6rem", color: CREAM, fontWeight: 700 }}
-                >
-                  Join Fate
-                </h3>
-
-                <p
-                  className="text-sm mb-7"
-                  style={{ color: "rgba(245,222,179,0.45)", fontWeight: 400 }}
-                >
-                  Get early access. No spam, ever.
-                </p>
-
-                <div className="relative mb-4">
-                  <input
-                    type="email"
-                    placeholder="Your email address"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && handleRegister()}
-                    className="w-full bg-transparent text-sm outline-none rounded-full"
-                    style={{
-                      border: `1px solid rgba(32,178,170,0.3)`,
-                      padding: "14px 18px",
-                      color: CREAM,
-                      fontSize: "0.94rem",
-                    }}
-                  />
-                </div>
-
-                <RegisterButton onClick={handleRegister} />
-
-                <p
-                  className="text-xs mt-4 text-center"
-                  style={{ color: "rgba(245,222,179,0.25)", fontWeight: 400 }}
-                >
-                  By registering you agree to our Terms & Privacy Policy
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div
-          className="h-px"
-          style={{
-            background: "linear-gradient(90deg, transparent, #20B2AA40, #CC412540, transparent)",
-          }}
-        />
-      </div>
     </section>
   );
 }

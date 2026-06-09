@@ -1,24 +1,22 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { CalendarDays, MapPin, ArrowRight } from "lucide-react";
-import { Caveat, DM_Sans, Bebas_Neue } from "next/font/google";
+import { Quicksand } from "next/font/google";
 
-const caveat = Caveat({
+const quicksand = Quicksand({
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-});
+// ─── Palette ──────────────────────────────────────────────────────────────────
+const TEAL    = "#20B2AA";
+const RUST    = "#CC4125";
+const CREAM   = "#F5DEB3";
+const SLATE   = "#36454F";
 
-const bebas = Bebas_Neue({
-  subsets: ["latin"],
-  weight: ["400"],
-});
-
+// ─── Data ─────────────────────────────────────────────────────────────────────
 const events = [
   {
     title: "Neon Rooftop Nights",
@@ -54,119 +52,192 @@ const events = [
   },
 ];
 
+// ─── Event Card ───────────────────────────────────────────────────────────────
+function EventCard({ event }: { event: (typeof events)[0] }) {
+  return (
+    <div className="group relative overflow-hidden border border-white/10 bg-white/5">
+      {/* Image */}
+      <div className="relative h-[420px] overflow-hidden">
+        <Image
+          src={event.image}
+          alt={event.title}
+          fill
+          className="object-cover transition-transform duration-[1400ms] group-hover:scale-110"
+        />
+
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+
+        {/* Teal top-edge glow on hover — matches site system */}
+        <div
+          className="absolute top-0 left-0 right-0 h-[3px] opacity-0 group-hover:opacity-100 transition-opacity duration-400"
+          style={{
+            background: `linear-gradient(to right, transparent, ${TEAL}, transparent)`,
+          }}
+        />
+
+        {/* Floating category pill */}
+        <div className="absolute left-5 top-5 rounded-full bg-white/10 px-4 py-2 backdrop-blur-md">
+          <p
+            className={`${quicksand.className} text-xs font-semibold uppercase tracking-[0.2em] text-white`}
+          >
+            {event.category}
+          </p>
+        </div>
+
+        {/* Date badge — RUST accent */}
+        <div
+          className="absolute right-5 top-5 flex h-20 w-20 flex-col items-center justify-center shadow-2xl"
+          style={{ background: RUST }}
+        >
+          <span
+            className={`${quicksand.className} text-3xl font-black leading-none text-white`}
+          >
+            {event.date.split(" ")[1]}
+          </span>
+          <span
+            className={`${quicksand.className} text-xs font-bold uppercase tracking-[0.18em] text-white/80`}
+          >
+            {event.date.split(" ")[0]}
+          </span>
+        </div>
+
+        {/* Card content */}
+        <div className="absolute bottom-0 left-0 w-full p-6 md:p-8">
+          <h3
+            className={`${quicksand.className} text-3xl font-black uppercase leading-[0.95] text-white md:text-4xl`}
+          >
+            {event.title}
+          </h3>
+
+          <div
+            className={`${quicksand.className} mt-4 flex flex-wrap gap-5 text-sm text-white/70`}
+          >
+            <div className="flex items-center gap-2">
+              <CalendarDays className="h-4 w-4" style={{ color: TEAL }} />
+              <span>{event.date}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <MapPin className="h-4 w-4" style={{ color: TEAL }} />
+              <span>{event.location}</span>
+            </div>
+          </div>
+
+          {/* Per-card CTA — CREAM text ghost button (inline, subtle) */}
+          <button
+            className={`${quicksand.className} group/btn mt-6 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] transition-all duration-300 hover:gap-4`}
+            style={{ color: CREAM }}
+          >
+            View Event
+            <ArrowRight className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Main Section ─────────────────────────────────────────────────────────────
 export default function EventsSection() {
   return (
-    <section className="relative overflow-hidden bg-[#0f1115] py-24 md:py-32">
-      {/* Background glow */}
-      <div className="absolute left-[-120px] top-[-120px] h-[320px] w-[320px] rounded-full bg-[#20B2AA]/20 blur-3xl" />
-      <div className="absolute bottom-[-160px] right-[-100px] h-[300px] w-[300px] rounded-full bg-[#F5DEB3]/10 blur-3xl" />
+    <section
+      className="relative overflow-hidden py-24 md:py-32"
+      style={{ background: SLATE }}
+    >
+      {/* Background glows */}
+      <div
+        className="absolute left-[-120px] top-[-120px] h-[320px] w-[320px] rounded-full blur-3xl"
+        style={{ background: `${TEAL}25` }}
+      />
+      <div
+        className="absolute bottom-[-160px] right-[-100px] h-[300px] w-[300px] rounded-full blur-3xl"
+        style={{ background: `${CREAM}12` }}
+      />
 
       <div className="relative mx-auto max-w-7xl px-6 md:px-10">
-        {/* Heading */}
-        <div className="mb-16 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <div className="max-w-2xl">
-            <p
-              className={`${caveat.className} mb-3 text-3xl text-[#20B2AA]`}
-            >
-              The city never sleeps
-            </p>
 
-            <h2
-              className={`${bebas.className} text-6xl leading-[0.9] text-[#F5DEB3] md:text-8xl`}
-            >
-              EVENTS IN FATE
-            </h2>
-
+        {/* ══ STANDARDISED SECTION HEADING ══ */}
+        <div className="mb-10 sm:mb-16 max-w-3xl">
+          {/* Rust dot + label — cream tint on dark bg */}
+          <div className="flex items-center gap-3">
+            <span className="h-2 w-2 rounded-full" style={{ background: RUST }} />
             <p
-              className={`${dmSans.className} mt-6 text-base leading-relaxed text-white/70 md:text-lg`}
+              className={`text-sm sm:text-base uppercase tracking-[0.25em] sm:tracking-[0.35em] ${quicksand.className}`}
+              style={{ color: "rgba(245,222,179,0.5)" }}
             >
-              From rooftop concerts and immersive art shows to food carnivals
-              and cultural festivals — Fate transforms every week into a new
-              experience worth chasing.
+              City Calendar
             </p>
           </div>
 
-          <button
-            className={`${dmSans.className} group flex w-fit items-center gap-2 rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-medium text-white transition-all duration-300 hover:border-[#20B2AA] hover:bg-[#20B2AA] hover:text-black`}
+          {/* Main title — cream on dark */}
+          <h2
+            className={`mt-4 text-4xl sm:text-5xl font-black uppercase leading-[0.95] md:text-7xl ${quicksand.className}`}
+            style={{ color: CREAM }}
           >
-            Explore All Events
-            <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-          </button>
+            Events
+            <br />
+            in Fate.
+          </h2>
+
+          {/* Gradient bar */}
+          <div
+            className="mt-4 h-[3px] w-20 sm:w-24 rounded-full"
+            style={{
+              background: `linear-gradient(to right, ${RUST}, ${TEAL}, transparent)`,
+            }}
+          />
+
+          {/* Description */}
+          <p
+            className={`mt-5 sm:mt-6 text-xl sm:text-2xl leading-relaxed ${quicksand.className}`}
+            style={{ color: "rgba(245,222,179,0.65)" }}
+          >
+            From rooftop concerts and immersive art shows to food carnivals
+            and cultural festivals — Fate transforms every week into a new
+            experience worth chasing.
+          </p>
+
+          {/* ── STANDARDISED BUTTONS — inverted for dark bg ── */}
+          <div className="mt-8 flex flex-col sm:flex-row flex-wrap gap-3 md:gap-5">
+            {/* Primary: cream bg, teal slide-in hover */}
+            <Link
+              href="/events"
+              className={`group relative inline-flex items-center justify-center h-12 md:h-14 px-7 md:px-8 overflow-hidden uppercase tracking-[0.18em] text-xs md:text-sm font-semibold ${quicksand.className}`}
+              style={{ background: CREAM, color: SLATE }}
+            >
+              <span
+                className="absolute inset-0 scale-x-0 origin-left transition-transform duration-500 group-hover:scale-x-100"
+                style={{ background: TEAL }}
+              />
+              <span className="relative z-10">Explore All Events</span>
+            </Link>
+
+            {/* Secondary: cream border ghost */}
+            <Link
+              href="/calendar"
+              className={`inline-flex items-center justify-center h-12 md:h-14 px-7 md:px-8 uppercase tracking-[0.18em] text-xs md:text-sm font-semibold transition-all duration-300 ${quicksand.className}`}
+              style={{
+                border: `1px solid ${CREAM}`,
+                color: CREAM,
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.background = CREAM;
+                (e.currentTarget as HTMLAnchorElement).style.color = SLATE;
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.background = "transparent";
+                (e.currentTarget as HTMLAnchorElement).style.color = CREAM;
+              }}
+            >
+              View Calendar
+            </Link>
+          </div>
         </div>
 
         {/* Event Grid */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {events.map((event, index) => (
-            <div
-              key={index}
-              className="group relative overflow-hidden rounded-[28px] border border-white/10 bg-white/5"
-            >
-              {/* Image */}
-              <div className="relative h-[420px] overflow-hidden">
-                <Image
-                  src={event.image}
-                  alt={event.title}
-                  fill
-                  className="object-cover transition-transform duration-[1400ms] group-hover:scale-110"
-                />
-
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-
-                {/* Floating category */}
-                <div className="absolute left-5 top-5 rounded-full bg-white/10 px-4 py-2 backdrop-blur-md">
-                  <p
-                    className={`${dmSans.className} text-xs font-semibold uppercase tracking-[0.2em] text-white`}
-                  >
-                    {event.category}
-                  </p>
-                </div>
-
-                {/* Date */}
-                <div className="absolute right-5 top-5 flex h-20 w-20 flex-col items-center justify-center rounded-2xl bg-[#20B2AA] text-black shadow-2xl">
-                  <span
-                    className={`${bebas.className} text-3xl leading-none`}
-                  >
-                    {event.date.split(" ")[1]}
-                  </span>
-                  <span
-                    className={`${dmSans.className} text-xs font-bold uppercase tracking-[0.18em]`}
-                  >
-                    {event.date.split(" ")[0]}
-                  </span>
-                </div>
-
-                {/* Content */}
-                <div className="absolute bottom-0 left-0 w-full p-6 md:p-8">
-                  <h3
-                    className={`${bebas.className} text-4xl leading-[0.9] text-white md:text-5xl`}
-                  >
-                    {event.title}
-                  </h3>
-
-                  <div
-                    className={`${dmSans.className} mt-4 flex flex-wrap gap-5 text-sm text-white/80`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <CalendarDays className="h-4 w-4 text-[#20B2AA]" />
-                      <span>{event.date}</span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-[#20B2AA]" />
-                      <span>{event.location}</span>
-                    </div>
-                  </div>
-
-                  <button
-                    className={`${dmSans.className} mt-6 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-[#F5DEB3] transition-all duration-300 hover:gap-4`}
-                  >
-                    View Event
-                    <ArrowRight className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
+            <EventCard key={index} event={event} />
           ))}
         </div>
       </div>

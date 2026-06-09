@@ -67,9 +67,11 @@ function RestaurantImageCard({
           className="object-cover transition duration-700 group-hover:scale-110"
         />
 
+        {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#36454F] via-[#36454F]/30 to-transparent" />
 
-        <div className="absolute inset-0 rounded-[20px] sm:rounded-[28px] ring-1 ring-[#F5DEB3]/10 group-hover:ring-[#CC4125]/40 transition duration-500" />
+        {/* Ring */}
+        <div className="absolute inset-0 rounded-[20px] sm:rounded-[28px] ring-1 ring-white/10 group-hover:ring-[#CC4125]/50 transition duration-500" />
 
         <div className="absolute bottom-4 left-4 sm:bottom-5 sm:left-5">
           <p
@@ -77,8 +79,9 @@ function RestaurantImageCard({
           >
             Dining
           </p>
+          {/* ✅ Card title: white */}
           <h3
-            className={`mt-1 text-2xl sm:text-3xl font-black text-[#F5DEB3] ${quicksand.className}`}
+            className={`mt-1 text-2xl sm:text-3xl font-black text-white ${quicksand.className}`}
           >
             {title}
           </h3>
@@ -90,11 +93,11 @@ function RestaurantImageCard({
 
 function FeaturedCard() {
   return (
-    <div className="relative overflow-hidden rounded-[24px] sm:rounded-[32px] border border-[#F5DEB3]/15 bg-[#36454F]/80 p-6 sm:p-8 shadow-2xl backdrop-blur-sm h-full">
+    <div className="relative overflow-hidden rounded-[24px] sm:rounded-[32px] border border-[#36454F]/20 bg-[#36454F] p-6 sm:p-8 shadow-xl h-full">
       {/* Teal glow */}
-      <div className="absolute -right-20 -top-20 h-56 w-56 rounded-full bg-[#20B2AA]/25 blur-3xl" />
-      {/* Burnt red accent glow */}
-      <div className="absolute -left-16 -bottom-16 h-48 w-48 rounded-full bg-[#CC4125]/20 blur-3xl" />
+      <div className="absolute -right-20 -top-20 h-56 w-56 rounded-full bg-[#20B2AA]/20 blur-3xl" />
+      {/* Rust accent glow */}
+      <div className="absolute -left-16 -bottom-16 h-48 w-48 rounded-full bg-[#CC4125]/25 blur-3xl" />
 
       <div className="relative z-10">
         <p
@@ -103,8 +106,9 @@ function FeaturedCard() {
           Culinary Experiences
         </p>
 
+        {/* ✅ Featured card heading: white (on dark card bg) */}
         <h2
-          className={`mt-4 text-3xl sm:text-4xl lg:text-5xl font-black uppercase leading-none text-[#F5DEB3] ${quicksand.className}`}
+          className={`mt-4 text-3xl sm:text-4xl lg:text-5xl font-black uppercase leading-none text-wheat ${quicksand.className}`}
         >
           Taste The
           <br />
@@ -113,7 +117,8 @@ function FeaturedCard() {
           Funinfate
         </h2>
 
-        <p className={`mt-4 sm:mt-5 max-w-md text-xl sm:text-2xl leading-relaxed text-[#F5DEB3]/70 ${quicksand.className}`}>
+        {/* ✅ Featured card body: white/70 (on dark card bg) */}
+        <p className={`mt-4 sm:mt-5 max-w-md text-xl sm:text-2xl leading-relaxed text-wheat/70 ${quicksand.className}`}>
           From immersive rooftop lounges to curated chef experiences,
           discover the restaurants, nightlife, and social spaces powering
           the energy of Funinfate.
@@ -132,7 +137,7 @@ function FeaturedCard() {
 
           <Link
             href="/experience"
-            className={`inline-flex items-center justify-center rounded-full border border-[#F5DEB3]/25 px-5 sm:px-6 py-2.5 sm:py-3 text-base font-semibold text-[#F5DEB3] transition hover:bg-[#CC4125] hover:border-[#CC4125] hover:text-white ${quicksand.className}`}
+            className={`inline-flex items-center justify-center rounded-full border border-white/25 px-5 sm:px-6 py-2.5 sm:py-3 text-base font-semibold text-white transition hover:bg-[#CC4125] hover:border-[#CC4125] hover:text-white ${quicksand.className}`}
           >
             View Experiences
           </Link>
@@ -143,7 +148,8 @@ function FeaturedCard() {
 }
 
 export default function RestaurantShowcaseSection() {
-  return (
+  return(
+    /* ✅ Background: white */
     <section className="relative overflow-hidden px-4 sm:px-6 py-14 sm:py-20 md:px-10 lg:px-16 bg-white">
 
       {/* CONTENT */}
@@ -152,23 +158,27 @@ export default function RestaurantShowcaseSection() {
         {/* Section Heading */}
         <div className="mb-10 sm:mb-16 max-w-3xl">
           <div className="flex items-center gap-3">
+            {/* Rust dot */}
             <span className="h-2 w-2 rounded-full bg-[#CC4125]" />
-            <p className={`text-sm sm:text-base uppercase tracking-[0.25em] sm:tracking-[0.35em] text-[#20B2AA] ${quicksand.className}`}>
-              Restaurants & Nightlife
+            <p className={`text-sm sm:text-base uppercase tracking-[0.25em] sm:tracking-[0.35em] text-black/45 ${quicksand.className}`}>
+              Restaurants &amp; Nightlife
             </p>
           </div>
 
+          {/* ✅ Section heading: black */}
           <h2
-            className={`mt-4 text-4xl sm:text-5xl font-black uppercase leading-[0.95] text-[#36454F] md:text-7xl ${quicksand.className}`}
+            className={`mt-4 text-4xl sm:text-5xl font-black uppercase leading-[0.95] text-black md:text-7xl ${quicksand.className}`}
           >
-            Eat and 
+            Eat and
             <br />
             Drink.
           </h2>
 
+          {/* Gradient bar */}
           <div className="mt-4 h-[3px] w-20 sm:w-24 rounded-full bg-gradient-to-r from-[#CC4125] via-[#20B2AA] to-transparent" />
 
-          <p className={`mt-5 sm:mt-6 text-xl sm:text-2xl leading-relaxed text-[#36454F]/60 ${quicksand.className}`}>
+          {/* ✅ Section description: black/60 */}
+          <p className={`mt-5 sm:mt-6 text-xl sm:text-2xl leading-relaxed text-black/60 ${quicksand.className}`}>
             Discover premium dining destinations, social venues,
             networking lounges, and curated culinary experiences
             designed around the energy of Funinfate.
