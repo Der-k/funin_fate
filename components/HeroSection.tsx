@@ -15,11 +15,33 @@ type MediaItem =
   | { type: "image"; src: string; alt?: string };
 
 const REEL: MediaItem[] = [
-  { type: "video", src: "/videos/hero-background.mp4",      poster: "/images/hero-poster.jpg" },
-  { type: "image", src: "/images/hero-slide-2.jpg",         alt: "Frisco skyline" },
-  { type: "image", src: "/images/hero-slide-3.jpg",         alt: "Frisco dining" },
-  { type: "video", src: "/videos/hero-slide-4.mp4",         poster: "/images/hero-slide-4-poster.jpg" },
-  { type: "image", src: "/images/hero-slide-5.jpg",         alt: "Frisco outdoors" },
+  {
+    type: "video",
+    src: "https://player.vimeo.com/external/...mp4",
+    poster:
+      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=2000&q=80",
+  },
+  {
+    type: "image",
+    src: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=2000&q=80",
+    alt: "Luxury community",
+  },
+  {
+    type: "image",
+    src: "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=2000&q=80",
+    alt: "Modern apartments",
+  },
+  {
+    type: "video",
+    src: "https://player.vimeo.com/external/...mp4",
+    poster:
+      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=2000&q=80",
+  },
+  {
+    type: "image",
+    src: "https://images.unsplash.com/photo-1449844908441-8829872d2607?auto=format&fit=crop&w=2000&q=80",
+    alt: "Nature trails",
+  },
 ];
 
 const AUTO_ADVANCE_MS = 6000;

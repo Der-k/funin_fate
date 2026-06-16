@@ -108,49 +108,27 @@ export default function Navbar() {
 
           {/* ════ LEFT: LOGO ════ */}
           <Link href="/" className="group flex items-center gap-4 select-none">
-            {/* Logo container — drops below navbar like a hanging badge */}
+            {/* Logo hangs below nav on a white pad — no glass, no circle */}
             <motion.div
-              whileHover={{ scale: 1.05, y: -3 }}
-              transition={{ type: "spring", stiffness: 340, damping: 20 }}
+              whileHover={{ scale: 1.04, y: -2 }}
+              transition={{ type: "spring", stiffness: 300, damping: 22 }}
               className="relative flex items-center justify-center"
               style={{
-                // Drops 20px below the nav top so it "hangs" prominently
-                marginTop: "20px",
-                width: "90px",
-                height: "90px",
-                borderRadius: "50%",
-                background: scrolled
-                  ? `${CHARCOAL}`
-                  : "rgba(245,222,179,0.12)",
-                backdropFilter: "blur(16px) saturate(1.5)",
-                WebkitBackdropFilter: "blur(16px) saturate(1.5)",
-                border: `2px solid ${scrolled ? TEAL : WHEAT}55`,
-                boxShadow: scrolled
-                  ? `0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px ${TEAL}30, inset 0 1px 0 rgba(255,255,255,0.1)`
-                  : `0 8px 32px rgba(0,0,0,0.2), 0 0 0 1px ${WHEAT}25, inset 0 1px 0 rgba(245,222,179,0.2)`,
-                transition: "all 0.4s ease",
+                marginTop: "28px",
+                width: "110px",
+                height: "110px",
+                borderRadius: "0 0 8px 8px",
+                background: WHITE,
+                boxShadow: "0 6px 24px rgba(0,0,0,0.18), 0 2px 6px rgba(0,0,0,0.12)",
                 zIndex: 10,
               }}
             >
-              {/* Teal glow ring on hover */}
-              <div
-                className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 pointer-events-none"
-                style={{
-                  boxShadow: `0 0 0 3px ${TEAL}55, 0 0 28px ${TEAL}40`,
-                  transition: "opacity 0.3s ease",
-                }}
-              />
-              {/* Rust accent dot — bottom right of logo circle */}
-              <div
-                className="absolute bottom-1 right-1 w-3 h-3 rounded-full"
-                style={{ background: RUST, border: `2px solid ${scrolled ? CHARCOAL : "rgba(20,28,32,0.5)"}`, zIndex: 2 }}
-              />
               <img
                 src={LOGO_SRC}
                 alt="Fate logo"
-                width={64}
-                height={64}
-                className="h-[64px] w-auto object-contain relative z-10"
+                width={90}
+                height={90}
+                className="h-[90px] w-auto object-contain"
               />
             </motion.div>
 
@@ -165,14 +143,17 @@ export default function Navbar() {
               <h1
                 className="text-[22px] font-black tracking-[-0.02em] leading-none uppercase"
                 style={{
-                  color: scrolled ? WHEAT : CHARCOAL,
-                  transition: "color 0.4s",
-                  textShadow: scrolled ? "none" : `0 1px 12px rgba(245,222,179,0.4)`,
+                  // Always WHEAT — readable on both transparent and scrolled dark backgrounds
+                  color: WHEAT,
+                  textShadow: scrolled
+                    ? `0 1px 8px rgba(0,0,0,0.4)`
+                    : `0 2px 16px rgba(0,0,0,0.55), 0 1px 4px rgba(0,0,0,0.7)`,
+                  transition: "text-shadow 0.4s",
                 }}
               >
                 Fate
               </h1>
-              {/* Tiny gradient bar under wordmark — matches section style */}
+              {/* Tiny gradient bar under wordmark */}
               <div
                 className="h-[2px] w-8 rounded-full mt-1"
                 style={{ background: `linear-gradient(to right, ${TEAL}, ${RUST})` }}
@@ -199,13 +180,13 @@ export default function Navbar() {
                     className="text-[11px] uppercase tracking-[0.22em] font-bold transition-all duration-300"
                     style={{
                       color: activeItem === item.label
-                        ? (scrolled ? WHEAT : CHARCOAL)
-                        : scrolled ? `${WHEAT}80` : `${CHARCOAL}80`,
+                        ? (scrolled ? WHEAT : WHITE)
+                        : scrolled ? `${WHEAT}80` : `${WHITE}90`,
                     }}
                   >
                     {item.label}
                   </span>
-                  {/* Animated underline — teal, matches section buttons */}
+                  {/* Animated underline */}
                   <span
                     className="h-[2px] rounded-full transition-all duration-350"
                     style={{
@@ -233,8 +214,8 @@ export default function Navbar() {
                   aria-label={item.label}
                   className="group flex items-center justify-center w-8 h-8 rounded-full transition-all duration-300"
                   style={{
-                    border: `1px solid ${scrolled ? `${WHEAT}25` : `${CHARCOAL}25`}`,
-                    color: scrolled ? `${WHEAT}60` : `${CHARCOAL}60`,
+                    border: `1px solid ${scrolled ? `${WHEAT}25` : `${WHITE}30`}`,
+                    color: scrolled ? `${WHEAT}60` : `${WHITE}70`,
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.background = `${TEAL}18`;
@@ -243,8 +224,8 @@ export default function Navbar() {
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.background = "transparent";
-                    e.currentTarget.style.color = scrolled ? `${WHEAT}60` : `${CHARCOAL}60`;
-                    e.currentTarget.style.borderColor = scrolled ? `${WHEAT}25` : `${CHARCOAL}25`;
+                    e.currentTarget.style.color = scrolled ? `${WHEAT}60` : `${WHITE}70`;
+                    e.currentTarget.style.borderColor = scrolled ? `${WHEAT}25` : `${WHITE}30`;
                   }}
                 >
                   {item.icon}
@@ -255,7 +236,7 @@ export default function Navbar() {
             {/* Divider */}
             <div
               className="hidden md:block w-px h-5 mx-1"
-              style={{ background: scrolled ? `${WHEAT}20` : `${CHARCOAL}20`, transition: "background 0.4s" }}
+              style={{ background: scrolled ? `${WHEAT}20` : `${WHITE}25`, transition: "background 0.4s" }}
             />
 
             {/* Search button */}
@@ -264,8 +245,8 @@ export default function Navbar() {
               onClick={() => setSearchOpen((o) => !o)}
               className="hidden md:flex items-center gap-2 h-9 px-4 rounded-none transition-all duration-300 group relative overflow-hidden"
               style={{
-                border: `1px solid ${scrolled ? `${WHEAT}30` : `${CHARCOAL}30`}`,
-                color: scrolled ? `${WHEAT}80` : `${CHARCOAL}80`,
+                border: `1px solid ${scrolled ? `${WHEAT}30` : `${WHITE}35`}`,
+                color: scrolled ? `${WHEAT}80` : `${WHITE}90`,
                 background: "transparent",
                 fontSize: "0.68rem",
                 fontWeight: 600,
@@ -275,14 +256,14 @@ export default function Navbar() {
               }}
               onMouseEnter={(e) => {
                 const el = e.currentTarget;
-                el.style.color = scrolled ? WHEAT : CHARCOAL;
+                el.style.color = scrolled ? WHEAT : WHITE;
                 el.style.borderColor = TEAL;
                 el.style.background = `${TEAL}12`;
               }}
               onMouseLeave={(e) => {
                 const el = e.currentTarget;
-                el.style.color = scrolled ? `${WHEAT}80` : `${CHARCOAL}80`;
-                el.style.borderColor = scrolled ? `${WHEAT}30` : `${CHARCOAL}30`;
+                el.style.color = scrolled ? `${WHEAT}80` : `${WHITE}90`;
+                el.style.borderColor = scrolled ? `${WHEAT}30` : `${WHITE}35`;
                 el.style.background = "transparent";
               }}
             >
@@ -290,7 +271,7 @@ export default function Navbar() {
               <span className={quicksand.className}>Search</span>
             </button>
 
-            {/* CTA button — standardised style: rust fill → teal slide-in */}
+            {/* CTA button */}
             <Link
               href="/discover"
               className={`group relative hidden lg:inline-flex items-center justify-center overflow-hidden h-9 px-5 ${quicksand.className}`}
@@ -330,8 +311,8 @@ export default function Navbar() {
               onClick={() => setMobileOpen((o) => !o)}
               className="flex lg:hidden items-center justify-center w-10 h-10 transition-all duration-300"
               style={{
-                border: `1px solid ${scrolled ? `${WHEAT}30` : `${CHARCOAL}30`}`,
-                color: scrolled ? WHEAT : CHARCOAL,
+                border: `1px solid ${scrolled ? `${WHEAT}30` : `${WHITE}35`}`,
+                color: scrolled ? WHEAT : WHITE,
                 background: "transparent",
               }}
             >
@@ -435,7 +416,7 @@ export default function Navbar() {
                     ))}
                   </div>
 
-                  {/* Mobile CTA — same standardised button style */}
+                  {/* Mobile CTA */}
                   <Link
                     href="/discover"
                     onClick={() => setMobileOpen(false)}
