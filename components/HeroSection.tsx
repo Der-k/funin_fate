@@ -175,11 +175,6 @@ export default function HeroSection() {
         .hero-slide video, .hero-slide img {
           width: 100%; height: 100%; object-fit: cover; display: block;
         }
-        .hero-overlay {
-          position: absolute; inset: 0;
-          background: linear-gradient(to bottom, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.15) 40%, rgba(0,0,0,0.68) 100%);
-          z-index: 1; pointer-events: none;
-        }
 
         .hero-counter {
           position: absolute; top: 18px; right: 20px; z-index: 4;
@@ -379,7 +374,6 @@ export default function HeroSection() {
             )}
           </div>
         ))}
-        <div className="hero-overlay" />
       </div>
 
       <div className="hero-counter">
@@ -399,73 +393,29 @@ export default function HeroSection() {
         ))}
       </div>
 
-      {mounted && (
-        <h1 className="hero-headline">
-           Live Well,<em>Live Fate!</em>
-        </h1>
-      )}
+      // see all fate has to offer;
 
-      {mounted && (
-        <div className="hero-cta-stack" onClick={(e) => e.stopPropagation()}>
-          <div className="hero-bar">
-            {FIELDS.map((field) => {
-              const isOpen = openField === field.id;
-              const value  = selected[field.id];
-              return (
-                <div key={field.id} className="hero-bar-seg-wrap">
-                  <button
-                    className={`hero-bar-seg${isOpen ? " open" : ""}`}
-                    onClick={(e) => { e.stopPropagation(); toggleField(field.id); }}
-                    aria-haspopup="listbox"
-                    aria-expanded={isOpen}
-                  >
-                    <span className="bar-seg-label">{field.label}</span>
-                    <span className={`bar-seg-value${value ? " filled" : ""}`}>
-                      {value || field.placeholder}
-                      <ChevronDown size={12} className="chevron" />
-                    </span>
-                  </button>
-
-                  {/* Dropdown — inline inside seg-wrap, no portal needed */}
-                  {isOpen && (
-                    <div
-                      className="hero-bar-dropdown"
-                      role="listbox"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {field.options.map((opt) => (
-                        <div
-                          key={opt}
-                          role="option"
-                          aria-selected={selected[field.id] === opt}
-                          className={`hero-bar-item${selected[field.id] === opt ? " selected" : ""}`}
-                          onMouseDown={(e) => { e.preventDefault(); selectOption(field.id, opt); }}
-                        >
-                          {opt}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-
-            <button className="hero-plan-btn">
-              Plan my visit
-              <ArrowRight size={13} />
-            </button>
-          </div>
-
-          <div className="hero-quick-links">
-            {QUICK_LINKS.map((link, i) => (
-              <span key={link} style={{ display: "contents" }}>
-                {i > 0 && <div className="hero-quick-sep" />}
-                <button className="hero-quick-link">{link}</button>
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
+{mounted && (
+  <h1
+    className={`hero-headline ${quicksand.className}`}
+    style={{
+      position: "relative", zIndex: 2, textAlign: "center", color: "#fff",
+      fontSize: "clamp(1.55rem, 4.5vw, 2.75rem)",
+      lineHeight: 1.15, letterSpacing: "-0.01em",
+      marginBottom: "clamp(18px, 3.5vh, 40px)", padding: "0 16px",
+      animation: "heroFadeUp 0.9s cubic-bezier(.22,.68,0,1.2) both",
+      fontWeight: 300,
+    }}
+  >
+    <span style={{ display: "block", color: "rgba(255,255,255,0.55)", fontWeight: 300, letterSpacing: "0.18em", textTransform: "uppercase", fontSize: "0.52em", marginBottom: "0.4em" }}>
+      Live Well
+    </span>
+    <span style={{ display: "block", fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1 }}>
+      Live Fate.
+    </span>
+  </h1>
+)}
+     
 
       <button
         className="hero-pause-btn"

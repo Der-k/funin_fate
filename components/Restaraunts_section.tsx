@@ -16,31 +16,37 @@ const restaurantImages = [
   {
     id: 1,
     title: "Rooftop Dining",
+    tag: "Rooftop",
     image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1200&auto=format&fit=crop",
   },
   {
     id: 2,
     title: "Luxury Interior",
+    tag: "Ambiance",
     image: "https://images.unsplash.com/photo-1552566626-52f8b828add9?q=80&w=1200&auto=format&fit=crop",
   },
   {
     id: 3,
     title: "Chef Experience",
+    tag: "Tasting Menu",
     image: "https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=1200&auto=format&fit=crop",
   },
   {
     id: 4,
     title: "Signature Cocktails",
+    tag: "Cocktails",
     image: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?q=80&w=1200&auto=format&fit=crop",
   },
   {
     id: 5,
     title: "Fine Dining",
+    tag: "Fine Dining",
     image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=1200&auto=format&fit=crop",
   },
   {
     id: 6,
     title: "Private Events",
+    tag: "Private Events",
     image: "https://images.unsplash.com/photo-1528605248644-14dd04022da1?q=80&w=1200&auto=format&fit=crop",
   },
 ];
@@ -57,9 +63,11 @@ const caveat = Caveat({
 
 function RestaurantImageCard({
   title,
+  tag,
   image,
 }: {
   title: string;
+  tag: string;
   image: string;
 }) {
   return (
@@ -73,17 +81,20 @@ function RestaurantImageCard({
           className="object-cover transition duration-700 group-hover:scale-110"
         />
 
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#36454F] via-[#36454F]/30 to-transparent" />
-
         {/* Ring */}
         <div className="absolute inset-0 ring-1 ring-white/10 group-hover:ring-[#CC4125]/50 transition duration-500" />
 
         <div className="absolute bottom-4 left-4 sm:bottom-5 sm:left-5">
-          <p className={`text-sm uppercase tracking-[0.25em] text-[#F5DEB3] ${quicksand.className}`}>
-            Dining
+          <p
+            className={`text-sm uppercase tracking-[0.25em] text-[#20B2AA] ${quicksand.className}`}
+            style={{ textShadow: "0 1px 8px rgba(0,0,0,0.7)" }}
+          >
+            {tag}
           </p>
-          <h3 className={`mt-1 text-2xl sm:text-3xl font-black text-[#F5DEB3] ${quicksand.className}`}>
+          <h3
+            className={`mt-1 text-2xl sm:text-3xl font-black text-[#F5DEB3] ${quicksand.className}`}
+            style={{ textShadow: "0 2px 10px rgba(0,0,0,0.7)" }}
+          >
             {title}
           </h3>
         </div>
@@ -269,7 +280,7 @@ export default function RestaurantShowcaseSection() {
         {/* Mobile 2-col image grid */}
         <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:hidden">
           {restaurantImages.map((img) => (
-            <RestaurantImageCard key={img.id} title={img.title} image={img.image} />
+            <RestaurantImageCard key={img.id} title={img.title} tag={img.tag} image={img.image} />
           ))}
         </div>
 
@@ -278,9 +289,9 @@ export default function RestaurantShowcaseSection() {
 
           {/* Left column */}
           <div className="flex flex-col gap-5">
-            <RestaurantImageCard title={restaurantImages[0].title} image={restaurantImages[0].image} />
-            <RestaurantImageCard title={restaurantImages[1].title} image={restaurantImages[1].image} />
-            <RestaurantImageCard title={restaurantImages[2].title} image={restaurantImages[2].image} />
+            <RestaurantImageCard title={restaurantImages[0].title} tag={restaurantImages[0].tag} image={restaurantImages[0].image} />
+            <RestaurantImageCard title={restaurantImages[1].title} tag={restaurantImages[1].tag} image={restaurantImages[1].image} />
+            <RestaurantImageCard title={restaurantImages[2].title} tag={restaurantImages[2].tag} image={restaurantImages[2].image} />
           </div>
 
           {/* Centre — Featured card */}
@@ -290,9 +301,9 @@ export default function RestaurantShowcaseSection() {
 
           {/* Right column */}
           <div className="flex flex-col gap-5">
-            <RestaurantImageCard title={restaurantImages[3].title} image={restaurantImages[3].image} />
-            <RestaurantImageCard title={restaurantImages[4].title} image={restaurantImages[4].image} />
-            <RestaurantImageCard title={restaurantImages[5].title} image={restaurantImages[5].image} />
+            <RestaurantImageCard title={restaurantImages[3].title} tag={restaurantImages[3].tag} image={restaurantImages[3].image} />
+            <RestaurantImageCard title={restaurantImages[4].title} tag={restaurantImages[4].tag} image={restaurantImages[4].image} />
+            <RestaurantImageCard title={restaurantImages[5].title} tag={restaurantImages[5].tag} image={restaurantImages[5].image} />
           </div>
 
         </div>

@@ -6,19 +6,24 @@ import { Search, Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Quicksand } from "next/font/google";
 
+
 const quicksand = Quicksand({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
 });
 
-const LOGO_SRC = "/images/logo.png";
-
+// Hrefs point at section ids on the homepage (e.g. /#discover).
+// From any other route, Link will navigate to "/" and jump to the hash;
+// from the homepage itself, handleNavClick intercepts and smooth-scrolls.
 const NAV_ITEMS = [
-  { label: "Discover",       href: "/discover" },
-  { label: "Eat & Drink",    href: "/dining" },
-  { label: "Events",         href: "/events" },
-  { label: "Plan Your Stay", href: "/stay" },
+  { label: "Discover",       href: "/#discover" },
+  { label: "Eat & Drink",    href: "/#dining" },
+  { label: "Events",         href: "/#events" },
+  { label: "Plan Your Stay", href: "/#stay" },
 ];
+
+// Height to offset scroll position by so content doesn't land under the fixed navbar.
+const NAV_SCROLL_OFFSET = 110;
 
 // ─── Palette ──────────────────────────────────────────────────────────────────
 const TEAL     = "#20B2AA";
@@ -55,12 +60,31 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeItem, setActiveItem] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Intercepts nav clicks when we're already on the homepage so the section
+  // scrolls smoothly into view instead of doing a hard hash jump.
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    const hash = href.split("#")[1];
+    if (!hash) return;
+
+    if (typeof window !== "undefined" && window.location.pathname === "/") {
+      const target = document.getElementById(hash);
+      if (target) {
+        e.preventDefault();
+        const top = target.getBoundingClientRect().top + window.scrollY - NAV_SCROLL_OFFSET;
+        window.scrollTo({ top, behavior: "smooth" });
+        window.history.pushState(null, "", href);
+      }
+    }
+    setMobileOpen(false);
+  };
 
   return (
     <>
@@ -104,58 +128,49 @@ export default function Navbar() {
         </div>
 
         {/* ── NAV BAR ── */}
-        <nav className="relative flex items-center justify-between px-6 md:px-12 lg:px-16 h-[76px]">
+        <nav className="relative flex items-center justify-between px-6 md:px-12 lg:px-16 h-[76px] overflow-visible">
 
-          {/* ════ LEFT: LOGO ════ */}
-          <Link href="/" className="group flex items-center gap-4 select-none">
-            {/* Logo hangs below nav on a white pad — no glass, no circle */}
-            <motion.div
-              whileHover={{ scale: 1.04, y: -2 }}
-              transition={{ type: "spring", stiffness: 300, damping: 22 }}
-              className="relative flex items-center justify-center"
-              style={{
-                marginTop: "28px",
-                width: "110px",
-                height: "110px",
-                borderRadius: "0 0 8px 8px",
-                background: WHITE,
-                boxShadow: "0 6px 24px rgba(0,0,0,0.18), 0 2px 6px rgba(0,0,0,0.12)",
-                zIndex: 10,
-              }}
-            >
-              <img
-                src={LOGO_SRC}
-                alt="Fate logo"
-                width={90}
-                height={90}
-                className="h-[90px] w-auto object-contain"
-              />
-            </motion.div>
-
-            {/* Wordmark */}
-            <div className="leading-none flex flex-col gap-0.5" style={{ marginTop: "6px" }}>
+          {/* ════ LEFT: WORDMARK (logo removed, heading enlarged, hangs below navbar for breathing room) ════ */}
+          <Link
+            href="/"
+            className="group relative flex items-start select-none z-10"
+            style={{ marginTop: "34px", paddingLeft: "clamp(1rem, 3vw, 2.5rem)" }}
+          >
+            <div className="flex flex-col gap-1.5">
               <p
-                className="text-[9px] uppercase tracking-[0.45em] font-bold"
+                className="text-[15px] md:text-[17px] uppercase tracking-[0.38em] font-bold leading-none"
                 style={{ color: TEAL }}
               >
                 Visit
               </p>
               <h1
-                className="text-[22px] font-black tracking-[-0.02em] leading-none uppercase"
+                className="text-[40px] md:text-[50px] lg:text-[58px] font-black tracking-[-0.01em] uppercase whitespace-nowrap"
                 style={{
                   // Always WHEAT — readable on both transparent and scrolled dark backgrounds
                   color: WHEAT,
+                  lineHeight: 1,
                   textShadow: scrolled
-                    ? `0 1px 8px rgba(0,0,0,0.4)`
-                    : `0 2px 16px rgba(0,0,0,0.55), 0 1px 4px rgba(0,0,0,0.7)`,
+                    ? `0 1px 10px rgba(0,0,0,0.45)`
+                    : `0 2px 18px rgba(0,0,0,0.55), 0 1px 5px rgba(0,0,0,0.7)`,
                   transition: "text-shadow 0.4s",
                 }}
               >
                 Fate
+                <sup
+                  style={{
+                    fontSize: "0.32em",
+                    fontWeight: 700,
+                    letterSpacing: "0",
+                    marginLeft: "2px",
+                    top: "-0.9em",
+                  }}
+                >
+                  TM
+                </sup>
               </h1>
-              {/* Tiny gradient bar under wordmark */}
+              {/* Gradient bar under wordmark */}
               <div
-                className="h-[2px] w-8 rounded-full mt-1"
+                className="h-[3px] w-14 rounded-full"
                 style={{ background: `linear-gradient(to right, ${TEAL}, ${RUST})` }}
               />
             </div>
@@ -172,6 +187,7 @@ export default function Navbar() {
               >
                 <Link
                   href={item.href}
+                  onClick={(e) => handleNavClick(e, item.href)}
                   className="group relative flex flex-col items-center gap-1"
                   onMouseEnter={() => setActiveItem(item.label)}
                   onMouseLeave={() => setActiveItem(null)}
@@ -240,70 +256,7 @@ export default function Navbar() {
             />
 
             {/* Search button */}
-            <button
-              aria-label="Search"
-              onClick={() => setSearchOpen((o) => !o)}
-              className="hidden md:flex items-center gap-2 h-9 px-4 rounded-none transition-all duration-300 group relative overflow-hidden"
-              style={{
-                border: `1px solid ${scrolled ? `${WHEAT}30` : `${WHITE}35`}`,
-                color: scrolled ? `${WHEAT}80` : `${WHITE}90`,
-                background: "transparent",
-                fontSize: "0.68rem",
-                fontWeight: 600,
-                letterSpacing: "0.18em",
-                textTransform: "uppercase",
-                fontFamily: "inherit",
-              }}
-              onMouseEnter={(e) => {
-                const el = e.currentTarget;
-                el.style.color = scrolled ? WHEAT : WHITE;
-                el.style.borderColor = TEAL;
-                el.style.background = `${TEAL}12`;
-              }}
-              onMouseLeave={(e) => {
-                const el = e.currentTarget;
-                el.style.color = scrolled ? `${WHEAT}80` : `${WHITE}90`;
-                el.style.borderColor = scrolled ? `${WHEAT}30` : `${WHITE}35`;
-                el.style.background = "transparent";
-              }}
-            >
-              <Search size={13} strokeWidth={2} />
-              <span className={quicksand.className}>Search</span>
-            </button>
-
-            {/* CTA button */}
-            <Link
-              href="/discover"
-              className={`group relative hidden lg:inline-flex items-center justify-center overflow-hidden h-9 px-5 ${quicksand.className}`}
-              style={{
-                background: RUST,
-                color: WHITE,
-                textTransform: "uppercase",
-                letterSpacing: "0.18em",
-                fontSize: "0.68rem",
-                fontWeight: 700,
-                textDecoration: "none",
-              }}
-              onMouseEnter={(e) => {
-                const slide = e.currentTarget.querySelector(".cta-slide") as HTMLElement;
-                if (slide) slide.style.transform = "scaleX(1)";
-              }}
-              onMouseLeave={(e) => {
-                const slide = e.currentTarget.querySelector(".cta-slide") as HTMLElement;
-                if (slide) slide.style.transform = "scaleX(0)";
-              }}
-            >
-              <span
-                className="cta-slide absolute inset-0"
-                style={{
-                  background: TEAL,
-                  transform: "scaleX(0)",
-                  transformOrigin: "left",
-                  transition: "transform 500ms cubic-bezier(.16,1,.3,1)",
-                }}
-              />
-              <span style={{ position: "relative", zIndex: 1 }}>Explore</span>
-            </Link>
+           
 
             {/* Mobile hamburger */}
             <button
@@ -356,7 +309,7 @@ export default function Navbar() {
                   >
                     <Link
                       href={item.href}
-                      onClick={() => setMobileOpen(false)}
+                      onClick={(e) => handleNavClick(e, item.href)}
                       className="group flex items-center justify-between py-3.5 border-b transition-colors duration-200"
                       style={{ borderColor: `${WHEAT}10` }}
                       onMouseEnter={(e) => {
@@ -415,25 +368,6 @@ export default function Navbar() {
                       </Link>
                     ))}
                   </div>
-
-                  {/* Mobile CTA */}
-                  <Link
-                    href="/discover"
-                    onClick={() => setMobileOpen(false)}
-                    className={`group relative inline-flex items-center justify-center overflow-hidden h-10 px-6 ${quicksand.className}`}
-                    style={{ background: RUST, color: WHITE, textTransform: "uppercase", letterSpacing: "0.18em", fontSize: "0.7rem", fontWeight: 700, textDecoration: "none" }}
-                    onMouseEnter={(e) => {
-                      const slide = e.currentTarget.querySelector(".mob-cta-slide") as HTMLElement;
-                      if (slide) slide.style.transform = "scaleX(1)";
-                    }}
-                    onMouseLeave={(e) => {
-                      const slide = e.currentTarget.querySelector(".mob-cta-slide") as HTMLElement;
-                      if (slide) slide.style.transform = "scaleX(0)";
-                    }}
-                  >
-                    <span className="mob-cta-slide absolute inset-0" style={{ background: TEAL, transform: "scaleX(0)", transformOrigin: "left", transition: "transform 500ms cubic-bezier(.16,1,.3,1)" }} />
-                    <span style={{ position: "relative", zIndex: 1 }}>Explore City</span>
-                  </Link>
                 </div>
               </div>
             </motion.div>

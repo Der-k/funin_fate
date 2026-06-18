@@ -129,7 +129,7 @@ export default function Footer() {
                     className="text-sm uppercase tracking-[0.35em]"
                     style={{ color: `${GOLD}AA`, fontWeight: 700 }}
                   >
-                    Plan Your Visit
+                    Plan Your Stay
                   </span>
                 </div>
 
@@ -304,7 +304,7 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5 mt-14 pt-8 border-t border-white/10">
             <div className={`flex items-center justify-center md:justify-start gap-3 text-white/45 text-lg ${quicksand.className}`}>
               <MapPin size={15} />
-              <p>©2026 Visit Fate – All Rights Reserved  ©2026 Live Well, Live Fate! - All Rights Reserved.</p>
+              <p>©2026 Visit Fate – All Rights Reserved  </p>
             </div>
 
             <div className="flex items-center justify-center md:justify-end gap-8">
