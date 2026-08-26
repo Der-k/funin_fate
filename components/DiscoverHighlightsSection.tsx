@@ -8,6 +8,10 @@ import { ArrowUpRight } from "lucide-react";
 import { Quicksand } from "next/font/google";
 import { motion } from "framer-motion";
 
+// ─── Dynamic content (all copy + image links live here, not in the component) ─
+// Expects the JSON at: /data/discover-fate-content.json (project root, per @/* -> ./*)
+import content from "@/data/discover-fate-content.json";
+
 const quicksand = Quicksand({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
@@ -20,102 +24,22 @@ const CREAM = "#F5DEB3";
 const SLATE = "#36454F";
 const WHITE = "#FFFFFF";
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
-const categories = [
-  {
-    title: "Top Experiences",
-    tag: "Must-Do",
-    number: "01",
-    description: "Immersive adventures and curated experiences shaping the identity of the city.",
-    href: "/experiences",
-    image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=2400&auto=format&q=90&fit=crop",
-  },
-  {
-    title: "Culture & Community",
-    tag: "Local Life",
-    number: "02",
-    description: "Meet creators, innovators, and communities driving the cultural pulse of Fate.",
-    href: "/community",
-    image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=2400&auto=format&q=90&fit=crop",
-  },
-  {
-    title: "Weekend Energy",
-    tag: "Events",
-    number: "03",
-    description: "Events, nightlife, and weekend discoveries across the city.",
-    href: "/events",
-    image: "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?q=80&w=2400&auto=format&q=90&fit=crop",
-  },
-  {
-    title: "Food & Drink",
-    tag: "Dining",
-    number: "04",
-    description: "Hidden kitchens, rooftop bars, and the flavors that define Fate's palate.",
-    href: "/dining",
-    image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=2400&auto=format&q=90&fit=crop",
-  },
-  {
-    title: "Art & Design",
-    tag: "Creative",
-    number: "05",
-    description: "Galleries, murals, studios, and the makers reshaping Fate's visual language.",
-    href: "/art",
-    image: "https://images.unsplash.com/photo-1531058020387-3be344556be6?q=80&w=2400&auto=format&q=90&fit=crop",
-  },
-  {
-    title: "Outdoors & Nature",
-    tag: "Escape",
-    number: "06",
-    description: "Parks, trails, and green spaces where the city breathes and slows down.",
-    href: "/outdoors",
-    image: "https://images.unsplash.com/photo-1501854140801-50d01698950b?q=80&w=2400&auto=format&q=90&fit=crop",
-  },
-];
+// ─── Types (mirror the JSON shape) ─────────────────────────────────────────────
+type Category = {
+  title: string;
+  tag: string;
+  number: string;
+  description: string;
+  href: string;
+  image: string;
+};
 
-const amenities = [
-  {
-    label: "Free City Wi-Fi",
-    tag: "Connectivity",
-    image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=2400&auto=format&q=90&fit=crop",
-  },
-  {
-    label: "Fitness Centers",
-    tag: "Wellness",
-    image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=2400&auto=format&q=90&fit=crop",
-  },
-  {
-    label: "Green Corridors",
-    tag: "Outdoors",
-    image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2400&auto=format&q=90&fit=crop",
-  },
-  {
-    label: "Retail Districts",
-    tag: "Shopping",
-    image: "https://images.unsplash.com/photo-1519567241046-7f570eee3ce6?q=80&w=2400&auto=format&q=90&fit=crop",
-  },
-  {
-    label: "Smart Parking",
-    tag: "Transport",
-    image: "https://images.unsplash.com/photo-1590674899484-d5640e854abe?q=80&w=2400&auto=format&q=90&fit=crop",
-  },
-  {
-    label: "Social Lounges",
-    tag: "Community",
-    image: "https://images.unsplash.com/photo-1521017432531-fbd92d768814?q=80&w=2400&auto=format&q=90&fit=crop",
-  },
-  {
-    label: "24/7 Security",
-    tag: "Safety",
-    image: "https://images.unsplash.com/photo-1557597774-9d273605dfa9?q=80&w=2400&auto=format&q=90&fit=crop",
-  },
-  {
-    label: "Aquatic Facilities",
-    tag: "Recreation",
-    image: "https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?q=80&w=2400&auto=format&q=90&fit=crop",
-  },
-];
+type Amenity = {
+  label: string;
+  tag: string;
+  image: string;
+};
 
-// ─── Specific local Fate businesses grouped by category ──────────────────────
 type Business = {
   name: string;
   type: string;
@@ -132,182 +56,19 @@ type BusinessGroup = {
   businesses: Business[];
 };
 
-const businessGroups: BusinessGroup[] = [
-  {
-    category: "Dining",
-    icon: "ti-tools-kitchen-2",
-    businesses: [
-      {
-        name: "Mesquite & Main",
-        type: "Texas BBQ",
-        address: "104 Main St, Fate TX",
-        blurb: "Slow-smoked brisket, house-made sides and pitmaster pride on every plate.",
-        hours: "Tue–Sun 11am–9pm",
-        img: "https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=2400&auto=format&q=90&fit=crop",
-        href: "/directory/mesquite-and-main",
-      },
-      {
-        name: "Paloma Kitchen",
-        type: "Modern Mexican",
-        address: "218 Fate Main St, Fate TX",
-        blurb: "Handmade tortillas, mezcal cocktails and coastal Mexican flavors in a bright, lively space.",
-        hours: "Mon–Sun 11am–10pm",
-        img: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?q=80&w=2400&auto=format&q=90&fit=crop",
-        href: "/directory/paloma-kitchen",
-      },
-      {
-        name: "The Ironwood Table",
-        type: "American Bistro",
-        address: "55 Commerce Dr, Fate TX",
-        blurb: "Farm-sourced plates, weekend brunch and a craft beer list that keeps locals coming back.",
-        hours: "Wed–Sun 10am–10pm",
-        img: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=2400&auto=format&q=90&fit=crop",
-        href: "/directory/ironwood-table",
-      },
-      {
-        name: "Dough & Co.",
-        type: "Artisan Pizza",
-        address: "310 Fate Town Square, Fate TX",
-        blurb: "Wood-fired Neapolitan pies with local toppings, natural wines and a relaxed, open-air patio.",
-        hours: "Daily 12pm–10pm",
-        img: "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=2400&auto=format&q=90&fit=crop",
-        href: "/directory/dough-and-co",
-      },
-    ],
-  },
-  {
-    category: "Wellness",
-    icon: "ti-heart-rate-monitor",
-    businesses: [
-      {
-        name: "Roots & Rise Yoga",
-        type: "Yoga Studio",
-        address: "88 Wellness Way, Fate TX",
-        blurb: "Hot yoga, breathwork and sound bath sessions in a serene, community-first studio.",
-        hours: "Daily 6am–8pm",
-        img: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=2400&auto=format&q=90&fit=crop",
-        href: "/directory/roots-and-rise",
-      },
-      {
-        name: "Apex Athletic Club",
-        type: "Fitness Center",
-        address: "401 Sportsplex Blvd, Fate TX",
-        blurb: "Full-service gym with group classes, personal training and recovery suites.",
-        hours: "Mon–Fri 5am–11pm, Sat–Sun 6am–9pm",
-        img: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=2400&auto=format&q=90&fit=crop",
-        href: "/directory/apex-athletic",
-      },
-      {
-        name: "Solace Med Spa",
-        type: "Medical Spa",
-        address: "12 Lakeside Dr, Fate TX",
-        blurb: "Facials, IV therapy and advanced skin treatments from licensed medical aestheticians.",
-        hours: "Tue–Sat 9am–7pm",
-        img: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?q=80&w=2400&auto=format&q=90&fit=crop",
-        href: "/directory/solace-med-spa",
-      },
-    ],
-  },
-  {
-    category: "Retail",
-    icon: "ti-shopping-bag",
-    businesses: [
-      {
-        name: "The Gather Market",
-        type: "Boutique Goods",
-        address: "22 Town Square, Fate TX",
-        blurb: "Locally curated home goods, gifts and apparel from Texas artisans and makers.",
-        hours: "Mon–Sat 10am–7pm",
-        img: "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?q=80&w=2400&auto=format&q=90&fit=crop",
-        href: "/directory/the-gather-market",
-      },
-      {
-        name: "Copper & Thread",
-        type: "Women's Boutique",
-        address: "67 Fate Main St, Fate TX",
-        blurb: "Contemporary women's fashion with a Texas twist — seasonal collections and personal styling.",
-        hours: "Tue–Sat 10am–6pm",
-        img: "https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?q=80&w=2400&auto=format&q=90&fit=crop",
-        href: "/directory/copper-and-thread",
-      },
-      {
-        name: "Landmark Books & Coffee",
-        type: "Bookstore & Café",
-        address: "5 Heritage Square, Fate TX",
-        blurb: "Independent booksellers paired with a specialty coffee bar — your new favourite third place.",
-        hours: "Daily 7am–9pm",
-        img: "https://images.unsplash.com/photo-1521056787327-239cf6b2f6a4?q=80&w=2400&auto=format&q=90&fit=crop",
-        href: "/directory/landmark-books",
-      },
-    ],
-  },
-  {
-    category: "Beauty",
-    icon: "ti-sparkles",
-    businesses: [
-      {
-        name: "Lumen Salon & Color Bar",
-        type: "Hair Salon",
-        address: "33 Fate Marketplace, Fate TX",
-        blurb: "Creative color, cuts and keratin treatments from a team of award-winning stylists.",
-        hours: "Tue–Sat 9am–7pm",
-        img: "https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=2400&auto=format&q=90&fit=crop",
-        href: "/directory/lumen-salon",
-      },
-      {
-        name: "The Barber Collective",
-        type: "Barbershop",
-        address: "9 Heritage Square, Fate TX",
-        blurb: "Classic cuts, straight-razor shaves and a welcoming space where every chair tells a story.",
-        hours: "Mon–Sat 8am–6pm",
-        img: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=2400&auto=format&q=90&fit=crop",
-        href: "/directory/barber-collective",
-      },
-      {
-        name: "Glow Nail Studio",
-        type: "Nail Salon",
-        address: "140 Commerce Dr, Fate TX",
-        blurb: "Gel, dip, acrylics and nail art in a relaxing, toxin-conscious studio environment.",
-        hours: "Mon–Sat 9am–7pm, Sun 10am–5pm",
-        img: "https://images.unsplash.com/photo-1604654894610-df63bc536371?q=80&w=2400&auto=format&q=90&fit=crop",
-        href: "/directory/glow-nail-studio",
-      },
-    ],
-  },
-  {
-    category: "Services",
-    icon: "ti-briefcase",
-    businesses: [
-      {
-        name: "Cornerstone Realty Group",
-        type: "Real Estate",
-        address: "200 Fate Blvd, Suite 100, Fate TX",
-        blurb: "Local experts helping families buy, sell and invest across Fate and the wider Rockwall County.",
-        hours: "Mon–Fri 8am–6pm",
-        img: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=2400&auto=format&q=90&fit=crop",
-        href: "/directory/cornerstone-realty",
-      },
-      {
-        name: "Pinnacle Financial Advisors",
-        type: "Financial Planning",
-        address: "75 Executive Park, Fate TX",
-        blurb: "Retirement planning, wealth management and tax strategy tailored to Fate families.",
-        hours: "Mon–Fri 9am–5pm",
-        img: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=2400&auto=format&q=90&fit=crop",
-        href: "/directory/pinnacle-financial",
-      },
-      {
-        name: "Hartwell Law Group",
-        type: "Legal Services",
-        address: "18 Town Center Dr, Fate TX",
-        blurb: "Family law, estate planning and business counsel from a trusted local firm.",
-        hours: "Mon–Fri 8:30am–5:30pm",
-        img: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=2400&auto=format&q=90&fit=crop",
-        href: "/directory/hartwell-law",
-      },
-    ],
-  },
-];
+type SocialLink = {
+  icon: "x" | "instagram" | "facebook";
+  href: string;
+  label: string;
+  handle: string;
+};
+
+// ─── Data pulled straight from JSON (dynamic, easy to swap/CMS-drive later) ───
+const categories: Category[] = content.categories;
+const amenities: Amenity[] = content.amenities;
+const businessGroups: BusinessGroup[] = content.businessGroups;
+const socialLinks: SocialLink[] = content.socialLinks as SocialLink[];
+const copy = content.sectionCopy;
 
 // ─── Social Icons ─────────────────────────────────────────────────────────────
 function XIcon() {
@@ -336,11 +97,12 @@ function FacebookIcon() {
   );
 }
 
-const socialLinks = [
-  { icon: <XIcon />, href: "https://x.com/VisitFate", label: "X (Twitter)", handle: "@VisitFate" },
-  { icon: <InstagramIcon />, href: "https://www.instagram.com/visitfate/", label: "Instagram", handle: "@visitfate" },
-  { icon: <FacebookIcon />, href: "https://web.facebook.com/profile.php/?id=61589634350805&_rdc=1&_rdr", label: "Facebook", handle: "visitfate" },
-];
+// Map JSON "icon" string -> actual icon component
+const SOCIAL_ICON_MAP: Record<SocialLink["icon"], ComponentType> = {
+  x: XIcon,
+  instagram: InstagramIcon,
+  facebook: FacebookIcon,
+};
 
 // ─── Social Section ───────────────────────────────────────────────────────────
 function SocialSection() {
@@ -367,44 +129,47 @@ function SocialSection() {
                 className={`text-sm sm:text-base uppercase tracking-[0.25em] sm:tracking-[0.35em] ${quicksand.className}`}
                 style={{ color: "rgba(245,222,179,0.5)" }}
               >
-                Follow Fate On
+                {copy.social.eyebrow}
               </p>
             </div>
 
             <div className="flex items-center gap-3 flex-wrap">
-              {socialLinks.map((link, i) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onMouseEnter={() => setHoveredIdx(i)}
-                  onMouseLeave={() => setHoveredIdx(null)}
-                  title={link.label}
-                  style={{
-                    display: "inline-flex", alignItems: "center", gap: "7px",
-                    padding: "9px 18px 9px 14px", borderRadius: "100px",
-                    border: `1px solid ${hoveredIdx === i ? TEAL : "rgba(245,222,179,0.2)"}`,
-                    background: hoveredIdx === i ? TEAL : "rgba(255,255,255,0.06)",
-                    color: hoveredIdx === i ? WHITE : `rgba(245,222,179,0.7)`,
-                    textDecoration: "none", transition: "all 220ms ease", whiteSpace: "nowrap",
-                    backdropFilter: "blur(8px)",
-                    boxShadow: hoveredIdx === i ? `0 4px 18px ${TEAL}50` : "none",
-                  }}
-                >
-                  <span style={{ display: "flex", flexShrink: 0 }}>{link.icon}</span>
-                  <span
-                    className={quicksand.className}
+              {socialLinks.map((link, i) => {
+                const Icon = SOCIAL_ICON_MAP[link.icon];
+                return (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onMouseEnter={() => setHoveredIdx(i)}
+                    onMouseLeave={() => setHoveredIdx(null)}
+                    title={link.label}
                     style={{
-                      fontSize: "0.8rem", fontWeight: 600, letterSpacing: "0.02em",
-                      color: hoveredIdx === i ? WHITE : "rgba(245,222,179,0.7)",
-                      transition: "color 220ms ease",
+                      display: "inline-flex", alignItems: "center", gap: "7px",
+                      padding: "9px 18px 9px 14px", borderRadius: "100px",
+                      border: `1px solid ${hoveredIdx === i ? TEAL : "rgba(245,222,179,0.2)"}`,
+                      background: hoveredIdx === i ? TEAL : "rgba(255,255,255,0.06)",
+                      color: hoveredIdx === i ? WHITE : `rgba(245,222,179,0.7)`,
+                      textDecoration: "none", transition: "all 220ms ease", whiteSpace: "nowrap",
+                      backdropFilter: "blur(8px)",
+                      boxShadow: hoveredIdx === i ? `0 4px 18px ${TEAL}50` : "none",
                     }}
                   >
-                    {link.handle}
-                  </span>
-                </a>
-              ))}
+                    <span style={{ display: "flex", flexShrink: 0 }}><Icon /></span>
+                    <span
+                      className={quicksand.className}
+                      style={{
+                        fontSize: "0.8rem", fontWeight: 600, letterSpacing: "0.02em",
+                        color: hoveredIdx === i ? WHITE : "rgba(245,222,179,0.7)",
+                        transition: "color 220ms ease",
+                      }}
+                    >
+                      {link.handle}
+                    </span>
+                  </a>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -417,7 +182,7 @@ function SocialSection() {
 function AccordionSlice({
   cat, isActive, onEnter, onLeave, onToggle, isFirst,
 }: {
-  cat: (typeof categories)[0];
+  cat: Category;
   isActive: boolean;
   onEnter: () => void;
   onLeave: () => void;
@@ -593,7 +358,7 @@ function DiscoverBlock({ active, onEnter, onLeave, onToggle }: {
         <div className="flex items-center gap-3">
           <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ background: RUST }} />
           <p style={{ fontFamily: "'Caveat', cursive", fontSize: "clamp(1.8rem, 3vw, 2.6rem)", fontWeight: 700, letterSpacing: "0.03em", color: "#000000", textTransform: "none", margin: 0 }}>
-            Discover the City
+            {copy.discoverBlock.eyebrow}
           </p>
         </div>
 
@@ -681,7 +446,7 @@ function DiscoverBlock({ active, onEnter, onLeave, onToggle }: {
 }
 
 // ─── Amenity Card ─────────────────────────────────────────────────────────────
-function AmenityCard({ amenity }: { amenity: (typeof amenities)[0] }) {
+function AmenityCard({ amenity }: { amenity: Amenity }) {
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -853,16 +618,16 @@ function BusinessDirectoryPanel() {
             <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
               <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: RUST, flexShrink: 0 }} />
               <p style={{ fontFamily: "'Caveat', cursive", fontSize: "clamp(1.3rem, 2vw, 1.8rem)", fontWeight: 600, color: "#000000", margin: 0, letterSpacing: "0.02em" }}>
-                Local Businesses
+                {copy.businessDirectory.eyebrow}
               </p>
             </div>
             <h2 className={quicksand.className} style={{ fontSize: "clamp(2rem, 3.5vw, 3rem)", fontWeight: 800, color: SLATE, margin: "0 0 4px", lineHeight: 1 }}>
-              What Fate Has to Offer
+              {copy.businessDirectory.heading}
             </h2>
             <div style={{ height: "3px", width: "80px", background: `linear-gradient(to right, ${TEAL}, ${RUST})`, borderRadius: "2px" }} />
           </div>
           <Link
-            href="/directory"
+            href={copy.businessDirectory.fullDirectoryHref}
             onMouseEnter={() => setDirHovered(true)}
             onMouseLeave={() => setDirHovered(false)}
             className={quicksand.className}
@@ -876,7 +641,7 @@ function BusinessDirectoryPanel() {
               alignSelf: "center",
             }}
           >
-            Full Directory <ArrowUpRight style={{ width: "12px", height: "12px" }} />
+            {copy.businessDirectory.fullDirectoryLabel} <ArrowUpRight style={{ width: "12px", height: "12px" }} />
           </Link>
         </div>
 
@@ -1018,7 +783,7 @@ function CityAmenitiesContent() {
           color: "#000000", lineHeight: 1.65, maxWidth: "780px", margin: "0 0 0 auto",
           textAlign: "left", letterSpacing: "0.01em",
         }}>
-          From free city-wide Wi-Fi and world-class fitness centers to lush green corridors and vibrant retail districts — Fate is designed for living well. Every corner of this city is built around the people who call it home, offering smart infrastructure, safe streets, social spaces, and recreational facilities that make everyday life feel anything but ordinary.
+          {copy.amenities.intro}
         </p>
       </div>
 
@@ -1076,23 +841,23 @@ function CityAmenitiesContent() {
           <div className="flex items-center gap-3">
             <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ background: RUST }} />
             <p style={{ fontFamily: "'Caveat', cursive", fontSize: "clamp(1.5rem, 2.4vw, 2.1rem)", fontWeight: 600, letterSpacing: "0.02em", color: "#000000", textTransform: "none", margin: 0 }}>
-              City Amenities
+              {copy.amenities.eyebrow}
             </p>
           </div>
 
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "1rem", marginTop: "1rem" }}>
             <div>
               <h2 className={`text-4xl sm:text-5xl font-black uppercase leading-[0.95] md:text-6xl ${quicksand.className}`} style={{ color: SLATE, margin: 0 }}>
-                The Fate<br />Experience.
+                {copy.amenities.heading}
               </h2>
               <div className="mt-4 h-[3px] w-20 sm:w-24 rounded-full" style={{ background: `linear-gradient(to right, ${RUST}, ${TEAL}, transparent)` }} />
               <p style={{ fontFamily: "'Caveat', cursive", fontSize: "clamp(1.5rem, 2.6vw, 2.2rem)", fontWeight: 500, letterSpacing: "0.01em", lineHeight: 1.5, color: "#000000", marginTop: "1.5rem", marginBottom: 0, maxWidth: "44ch" }}>
-                What makes Fate, Fate? Discover the businesses and amenities that define life here.
+                {copy.amenities.subheading}
               </p>
             </div>
 
             <Link
-              href="/directory"
+              href={copy.amenities.directoryHref}
               onMouseEnter={() => setDirHovered(true)}
               onMouseLeave={() => setDirHovered(false)}
               className={`inline-flex items-center gap-2 h-12 md:h-14 px-7 md:px-8 ${quicksand.className}`}
@@ -1104,7 +869,7 @@ function CityAmenitiesContent() {
                 textDecoration: "none", transition: "all 250ms ease", whiteSpace: "nowrap",
               }}
             >
-              Browse Directory <ArrowUpRight style={{ width: "13px", height: "13px" }} />
+              {copy.amenities.directoryCtaLabel} <ArrowUpRight style={{ width: "13px", height: "13px" }} />
             </Link>
           </div>
         </div>
@@ -1115,8 +880,8 @@ function CityAmenitiesContent() {
 }
 
 // ─── Tab Section Registry ──────────────────────────────────────────────────────
-// To add a new rotating tab later, just append an entry here — everything else
-// (auto-rotation, progress bar, crossfade animation, pause-on-hover) is generic.
+// Tab labels/icons come from JSON (content.sectionCopy.tabs); the renderer for
+// each tab still lives in code and is looked up by the tab's "key".
 type TabSection = {
   key: string;
   label: string;
@@ -1124,11 +889,15 @@ type TabSection = {
   Content: ComponentType;
 };
 
-const tabSections: TabSection[] = [
-  { key: "amenities", label: "City Amenities", icon: "ti ti-building-community", Content: CityAmenitiesContent },
-  { key: "businesses", label: "Find Businesses", icon: "ti ti-map-pin", Content: BusinessDirectoryPanel },
-  // { key: "events", label: "Upcoming Events", icon: "ti ti-calendar-event", Content: EventsContent },
-];
+const TAB_CONTENT_MAP: Record<string, ComponentType> = {
+  amenities: CityAmenitiesContent,
+  businesses: BusinessDirectoryPanel,
+};
+
+const tabSections: TabSection[] = copy.tabs.map((tab) => ({
+  ...tab,
+  Content: TAB_CONTENT_MAP[tab.key],
+}));
 
 const AUTOPLAY_DURATION_MS = 7000;
 const CROSSFADE_MS = 380;
@@ -1248,7 +1017,7 @@ function AmenitiesSection() {
 }
 
 // ─── Root Export ──────────────────────────────────────────────────────────────
-export default function DiscoverFateSection() {
+export default function DiscoverHighlightsSection() {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   const [clickedCard, setClickedCard] = useState<number | null>(null);
   const [autoCard, setAutoCard] = useState<number>(0);

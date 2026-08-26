@@ -2,28 +2,32 @@
 
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Menu, X } from "lucide-react";
+import { Menu, X, Search } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Quicksand } from "next/font/google";
-
+import { orderedSectionConfig } from "@/lib/site/section-config";
+import { DEFAULT_SCROLL_MARGIN_TOP } from "@/lib/site/section-config";
+import SearchModal from "@/components/SearchModal";
 
 const quicksand = Quicksand({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
 });
 
-// Hrefs point at section ids on the homepage (e.g. /#discover).
-// From any other route, Link will navigate to "/" and jump to the hash;
-// from the homepage itself, handleNavClick intercepts and smooth-scrolls.
-const NAV_ITEMS = [
-  { label: "Discover",       href: "/#discover" },
-  { label: "Eat & Drink",    href: "/#dining" },
-  { label: "Events",         href: "/#events" },
-  { label: "Plan Your Stay", href: "/#stay" },
-];
+// Nav items are derived from the section registry (lib/site/section-config.ts)
+// instead of a hardcoded array — add/reorder/rename a section there and this
+// navbar updates automatically, with no separate list to keep in sync.
+const NAV_ITEMS = orderedSectionConfig
+  .filter((section) => section.showInNav !== false)
+  .map((section) => ({
+    label: section.navLabel ?? section.title,
+    href: `/#${section.id}`,
+  }));
 
 // Height to offset scroll position by so content doesn't land under the fixed navbar.
-const NAV_SCROLL_OFFSET = 110;
+// Falls back to the same default the homepage uses for scrollMarginTop, so the two
+// never drift out of sync.
+const NAV_SCROLL_OFFSET = DEFAULT_SCROLL_MARGIN_TOP;
 
 // ─── Palette ──────────────────────────────────────────────────────────────────
 const TEAL     = "#20B2AA";
@@ -60,12 +64,31 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeItem, setActiveItem] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Global search shortcuts: Cmd/Ctrl+K always works; "/" works as long as
+  // the user isn't already typing in another input/textarea.
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      const isTypingTarget =
+        e.target instanceof HTMLElement &&
+        ["INPUT", "TEXTAREA"].includes(e.target.tagName);
+
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setSearchOpen(true);
+      } else if (e.key === "/" && !isTypingTarget) {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
   // Intercepts nav clicks when we're already on the homepage so the section
@@ -256,7 +279,27 @@ export default function Navbar() {
             />
 
             {/* Search button */}
-           
+            <button
+              aria-label="Search"
+              onClick={() => setSearchOpen(true)}
+              className="flex items-center justify-center w-9 h-9 rounded-full transition-all duration-300"
+              style={{
+                border: `1px solid ${scrolled ? `${WHEAT}25` : `${WHITE}30`}`,
+                color: scrolled ? `${WHEAT}60` : `${WHITE}70`,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = `${TEAL}18`;
+                e.currentTarget.style.color = TEAL;
+                e.currentTarget.style.borderColor = `${TEAL}50`;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.color = scrolled ? `${WHEAT}60` : `${WHITE}70`;
+                e.currentTarget.style.borderColor = scrolled ? `${WHEAT}25` : `${WHITE}30`;
+              }}
+            >
+              <Search size={14} strokeWidth={2} />
+            </button>
 
             {/* Mobile hamburger */}
             <button
@@ -374,6 +417,8 @@ export default function Navbar() {
           )}
         </AnimatePresence>
       </motion.header>
+
+      <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
   );
 }

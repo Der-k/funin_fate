@@ -5,6 +5,10 @@ import Link from "next/link";
 import { CalendarDays, MapPin, ArrowRight } from "lucide-react";
 import { Quicksand } from "next/font/google";
 
+// ─── Dynamic content (all copy + image links live here, not in the component) ─
+// Expects the JSON at: /data/events-section-content.json (project root, per @/* -> ./*)
+import content from "@/data/events-section-content.json";
+
 const quicksand = Quicksand({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
@@ -16,44 +20,20 @@ const RUST    = "#CC4125";
 const CREAM   = "#F5DEB3";
 const SLATE   = "#36454F";
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
-const events = [
-  {
-    title: "Neon Rooftop Nights",
-    category: "Music & Nightlife",
-    date: "JUL 18",
-    location: "Skyline District",
-    image:
-      "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?q=80&w=1600&auto=format&fit=crop",
-  },
-  {
-    title: "Fate Street Food Carnival",
-    category: "Food Festival",
-    date: "AUG 02",
-    location: "Old Town Market",
-    image:
-      "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=1600&auto=format&fit=crop",
-  },
-  {
-    title: "Sunset Lantern Festival",
-    category: "Culture",
-    date: "SEP 11",
-    location: "Riverwalk Gardens",
-    image:
-      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1600&auto=format&fit=crop",
-  },
-  {
-    title: "Midnight Art Parade",
-    category: "Creative Arts",
-    date: "OCT 05",
-    location: "Central Avenue",
-    image:
-      "https://images.unsplash.com/photo-1516280440614-37939bbacd81?q=80&w=1600&auto=format&fit=crop",
-  },
-];
+// ─── Data pulled straight from JSON (dynamic, easy to swap/CMS-drive later) ───
+type Event = {
+  title: string;
+  category: string;
+  date: string;
+  location: string;
+  image: string;
+};
+
+const events: Event[] = content.events;
+const sectionCopy = content.sectionCopy;
 
 // ─── Event Card ───────────────────────────────────────────────────────────────
-function EventCard({ event }: { event: (typeof events)[0] }) {
+function EventCard({ event }: { event: Event }) {
   return (
     <div className="group relative overflow-hidden border border-white/10 bg-white/5">
       {/* Image */}
@@ -128,7 +108,7 @@ function EventCard({ event }: { event: (typeof events)[0] }) {
             className={`${quicksand.className} group/btn mt-6 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] transition-all duration-300 hover:gap-4`}
             style={{ color: CREAM }}
           >
-            View Event
+            {sectionCopy.cardCtaLabel}
             <ArrowRight className="h-4 w-4" />
           </button>
         </div>
@@ -165,7 +145,7 @@ export default function EventsSection() {
               className={`text-sm sm:text-base uppercase tracking-[0.25em] sm:tracking-[0.35em] ${quicksand.className}`}
               style={{ color: "rgba(245,222,179,0.5)" }}
             >
-              City Calendar
+              {sectionCopy.eyebrow}
             </p>
           </div>
 
@@ -174,9 +154,12 @@ export default function EventsSection() {
             className={`mt-4 text-4xl sm:text-5xl font-black uppercase leading-[0.95] md:text-7xl ${quicksand.className}`}
             style={{ color: CREAM }}
           >
-            Events
-            <br />
-            in Fate.
+            {sectionCopy.heading.map((line: string, i: number) => (
+              <span key={i}>
+                {line}
+                {i < sectionCopy.heading.length - 1 && <br />}
+              </span>
+            ))}
           </h2>
 
           {/* Gradient bar */}
@@ -192,16 +175,14 @@ export default function EventsSection() {
             className={`mt-5 sm:mt-6 text-xl sm:text-2xl leading-relaxed ${quicksand.className}`}
             style={{ color: "rgba(245,222,179,0.65)" }}
           >
-            From rooftop concerts and immersive art shows to food carnivals
-            and cultural festivals — Fate transforms every week into a new
-            experience worth chasing.
+            {sectionCopy.intro}
           </p>
 
           {/* ── STANDARDISED BUTTONS — inverted for dark bg ── */}
           <div className="mt-8 flex flex-col sm:flex-row flex-wrap gap-3 md:gap-5">
             {/* Primary: cream bg, teal slide-in hover */}
             <Link
-              href="/events"
+              href={sectionCopy.primaryCta.href}
               className={`group relative inline-flex items-center justify-center h-12 md:h-14 px-7 md:px-8 overflow-hidden uppercase tracking-[0.18em] text-xs md:text-sm font-semibold ${quicksand.className}`}
               style={{ background: CREAM, color: SLATE }}
             >
@@ -209,12 +190,12 @@ export default function EventsSection() {
                 className="absolute inset-0 scale-x-0 origin-left transition-transform duration-500 group-hover:scale-x-100"
                 style={{ background: TEAL }}
               />
-              <span className="relative z-10">Explore All Events</span>
+              <span className="relative z-10">{sectionCopy.primaryCta.label}</span>
             </Link>
 
             {/* Secondary: cream border ghost */}
             <Link
-              href="/calendar"
+              href={sectionCopy.secondaryCta.href}
               className={`inline-flex items-center justify-center h-12 md:h-14 px-7 md:px-8 uppercase tracking-[0.18em] text-xs md:text-sm font-semibold transition-all duration-300 ${quicksand.className}`}
               style={{
                 border: `1px solid ${CREAM}`,
@@ -229,7 +210,7 @@ export default function EventsSection() {
                 (e.currentTarget as HTMLAnchorElement).style.color = CREAM;
               }}
             >
-              View Calendar
+              {sectionCopy.secondaryCta.label}
             </Link>
           </div>
         </div>

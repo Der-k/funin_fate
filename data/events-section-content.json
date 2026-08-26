@@ -1,0 +1,46 @@
+{
+  "events": [
+    {
+      "title": "Neon Rooftop Nights",
+      "category": "Music & Nightlife",
+      "date": "JUL 18",
+      "location": "Skyline District",
+      "image": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?q=80&w=1600&auto=format&fit=crop"
+    },
+    {
+      "title": "Fate Street Food Carnival",
+      "category": "Food Festival",
+      "date": "AUG 02",
+      "location": "Old Town Market",
+      "image": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=1600&auto=format&fit=crop"
+    },
+    {
+      "title": "Sunset Lantern Festival",
+      "category": "Culture",
+      "date": "SEP 11",
+      "location": "Riverwalk Gardens",
+      "image": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1600&auto=format&fit=crop"
+    },
+    {
+      "title": "Midnight Art Parade",
+      "category": "Creative Arts",
+      "date": "OCT 05",
+      "location": "Central Avenue",
+      "image": "https://images.unsplash.com/photo-1516280440614-37939bbacd81?q=80&w=1600&auto=format&fit=crop"
+    }
+  ],
+  "sectionCopy": {
+    "eyebrow": "City Calendar",
+    "heading": ["Events", "in Fate."],
+    "intro": "From rooftop concerts and immersive art shows to food carnivals and cultural festivals — Fate transforms every week into a new experience worth chasing.",
+    "primaryCta": {
+      "label": "Explore All Events",
+      "href": "/events"
+    },
+    "secondaryCta": {
+      "label": "View Calendar",
+      "href": "/calendar"
+    },
+    "cardCtaLabel": "View Event"
+  }
+}

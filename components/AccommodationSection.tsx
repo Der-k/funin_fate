@@ -5,41 +5,26 @@ import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Caveat } from "next/font/google";
 
+// ─── Dynamic content (all copy + image links live here, not in the component) ─
+// Expects the JSON at: /data/accommodation-section-content.json (project root, per @/* -> ./*)
+import content from "@/data/accommodation-section-content.json";
+
 const caveat = Caveat({
   subsets: ["latin"],
   weight: ["400", "600", "700"],
 });
 
-const stays = [
-  {
-    title: "Kigali Marriott Hotel",
-    image:
-      "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1400&auto=format&fit=crop",
-    href: "/accommodation/kigali-marriott",
-    category: "Luxury Hotel",
-  },
-  {
-    title: "Radisson Blu Kigali",
-    image:
-      "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=1400&auto=format&fit=crop",
-    href: "/accommodation/radisson-blu",
-    category: "Conference Stay",
-  },
-  {
-    title: "Four Points by Sheraton",
-    image:
-      "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?q=80&w=1400&auto=format&fit=crop",
-    href: "/accommodation/four-points",
-    category: "Business Hotel",
-  },
-  {
-    title: "The Retreat Kigali",
-    image:
-      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1400&auto=format&fit=crop",
-    href: "/accommodation/the-retreat",
-    category: "Boutique Escape",
-  },
-];
+// ─── Data pulled straight from JSON (dynamic, easy to swap/CMS-drive later) ───
+type Stay = {
+  title: string;
+  image: string;
+  href: string;
+  category: string;
+};
+
+const stays: Stay[] = content.stays;
+const tabs: string[] = content.tabs;
+const sectionCopy = content.sectionCopy;
 
 export default function AccommodationSection() {
   return (
@@ -54,36 +39,29 @@ export default function AccommodationSection() {
             <p
               className={`text-[#CC4125] text-3xl md:text-4xl mb-4 ${caveat.className}`}
             >
-              Stay & Relax
+              {sectionCopy.eyebrow}
             </p>
 
             {/* Main heading */}
             <h2 className="text-[#111111] text-5xl md:text-7xl font-black uppercase tracking-tight leading-[0.95] mb-8">
-              The Funinfate
-              <br />
-              Accommodation
-              <br />
-              Experience
+              {sectionCopy.heading.map((line: string, i: number) => (
+                <span key={i}>
+                  {line}
+                  {i < sectionCopy.heading.length - 1 && <br />}
+                </span>
+              ))}
             </h2>
 
             {/* Body paragraph */}
             <p
               className={`text-[#4a4a4a] text-2xl md:text-[2rem] leading-relaxed max-w-2xl mb-8 ${caveat.className}`}
             >
-              Discover premium hotels, boutique stays, and comfortable
-              accommodation options carefully selected for your Funinfate
-              experience.
+              {sectionCopy.intro}
             </p>
 
             {/* Tabs */}
             <div className="flex flex-wrap gap-5 mt-6">
-              {[
-                "Luxury Hotels",
-                "Boutique Stays",
-                "Apartments",
-                "Conference Hotels",
-                "City Escapes",
-              ].map((item, i) => (
+              {tabs.map((item, i) => (
                 <button
                   key={item}
                   className={`
@@ -104,7 +82,7 @@ export default function AccommodationSection() {
           {/* CTA */}
           <div className="flex-shrink-0 pt-2">
             <Link
-              href="/accommodation"
+              href={sectionCopy.cta.href}
               className="
                 inline-flex items-center justify-center gap-2
                 h-14 px-8
@@ -114,7 +92,7 @@ export default function AccommodationSection() {
                 transition-all duration-300
               "
             >
-              Explore Hotels
+              {sectionCopy.cta.label}
               <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
@@ -185,7 +163,7 @@ export default function AccommodationSection() {
                     </h3>
 
                     <p className="text-white/80 text-sm uppercase tracking-[0.2em]">
-                      Funinfate Preferred Stay
+                      {sectionCopy.cardFooterLabel}
                     </p>
                   </div>
                 </div>

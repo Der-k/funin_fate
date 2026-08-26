@@ -5,51 +5,27 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Quicksand, Caveat } from "next/font/google";
 import { useState } from "react";
- 
+
+// ─── Dynamic content (all copy + image links live here, not in the component) ─
+// Expects the JSON at: /data/restaurant-showcase-content.json (project root, per @/* -> ./*)
+import content from "@/data/restaurant-showcase-content.json";
+
 const TEAL     = "#20B2AA";
 const RUST     = "#CC4125";
 const WHEAT    = "#F5DEB3";
 const CHARCOAL = "#36454F";
 const WHITE    = "#FFFFFF";
 
-const restaurantImages = [
-  {
-    id: 1,
-    title: "Rooftop Dining",
-    tag: "Rooftop",
-    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1200&auto=format&fit=crop",
-  },
-  {
-    id: 2,
-    title: "Luxury Interior",
-    tag: "Ambiance",
-    image: "https://images.unsplash.com/photo-1552566626-52f8b828add9?q=80&w=1200&auto=format&fit=crop",
-  },
-  {
-    id: 3,
-    title: "Chef Experience",
-    tag: "Tasting Menu",
-    image: "https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=1200&auto=format&fit=crop",
-  },
-  {
-    id: 4,
-    title: "Signature Cocktails",
-    tag: "Cocktails",
-    image: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?q=80&w=1200&auto=format&fit=crop",
-  },
-  {
-    id: 5,
-    title: "Fine Dining",
-    tag: "Fine Dining",
-    image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=1200&auto=format&fit=crop",
-  },
-  {
-    id: 6,
-    title: "Private Events",
-    tag: "Private Events",
-    image: "https://images.unsplash.com/photo-1528605248644-14dd04022da1?q=80&w=1200&auto=format&fit=crop",
-  },
-];
+type RestaurantImage = {
+  id: number;
+  title: string;
+  tag: string;
+  image: string;
+};
+
+const restaurantImages: RestaurantImage[] = content.restaurantImages;
+const sectionCopy = content.sectionCopy;
+const featuredCard = content.featuredCard;
 
 const quicksand = Quicksand({
   subsets: ["latin"],
@@ -135,7 +111,7 @@ function FeaturedCard() {
             className={`text-sm uppercase tracking-[0.35em] font-bold ${quicksand.className}`}
             style={{ color: TEAL }}
           >
-            Culinary Experiences
+            {featuredCard.eyebrow}
           </p>
         </div>
 
@@ -143,11 +119,13 @@ function FeaturedCard() {
           className={`text-3xl sm:text-4xl lg:text-5xl font-black uppercase leading-[0.95] ${quicksand.className}`}
           style={{ color: WHEAT }}
         >
-          Taste The
-          <br />
-          Future Of
-          <br />
-          <span style={{ color: TEAL }}>Funinfate.</span>
+          {featuredCard.heading.lines.map((line: string, i: number) => (
+            <span key={i}>
+              {line}
+              <br />
+            </span>
+          ))}
+          <span style={{ color: TEAL }}>{featuredCard.heading.highlight}</span>
         </h2>
 
         <div
@@ -159,14 +137,12 @@ function FeaturedCard() {
           className={`mt-5 sm:mt-6 max-w-md text-xl sm:text-2xl leading-relaxed ${caveat.className}`}
           style={{ color: `${WHEAT}99` }}
         >
-          From immersive rooftop lounges to curated chef experiences,
-          discover the restaurants, nightlife, and social spaces powering
-          the energy of Funinfate.
+          {featuredCard.body}
         </p>
 
         <div className="mt-6 sm:mt-8 flex flex-col xs:flex-row flex-wrap gap-3 sm:gap-4">
           <Link
-            href="/restaurants"
+            href={featuredCard.primaryCta.href}
             onMouseEnter={() => setExploreHovered(true)}
             onMouseLeave={() => setExploreHovered(false)}
             className={`group relative inline-flex items-center justify-center overflow-hidden h-12 md:h-14 px-7 md:px-8 gap-2 ${quicksand.className}`}
@@ -199,7 +175,7 @@ function FeaturedCard() {
                 transition: "color 300ms ease",
               }}
             >
-              Explore Dining
+              {featuredCard.primaryCta.label}
             </span>
             <ArrowRight
               style={{
@@ -215,7 +191,7 @@ function FeaturedCard() {
           </Link>
 
           <Link
-            href="/experience"
+            href={featuredCard.secondaryCta.href}
             onMouseEnter={() => setExpHovered(true)}
             onMouseLeave={() => setExpHovered(false)}
             className={`inline-flex items-center justify-center h-12 md:h-14 px-7 md:px-8 ${quicksand.className}`}
@@ -232,7 +208,7 @@ function FeaturedCard() {
               transition: "all 300ms ease",
             }}
           >
-            View Experiences
+            {featuredCard.secondaryCta.label}
           </Link>
         </div>
       </div>
@@ -251,24 +227,25 @@ export default function RestaurantShowcaseSection() {
           <div className="flex items-center gap-3">
             <span className="h-2 w-2 rounded-full bg-[#CC4125]" />
             <p className={`text-sm sm:text-base uppercase tracking-[0.25em] sm:tracking-[0.35em] text-black/45 ${quicksand.className}`}>
-              Restaurants &amp; Nightlife
+              {sectionCopy.eyebrow}
             </p>
           </div>
 
           <h2
             className={`mt-4 text-4xl sm:text-5xl font-black uppercase leading-[0.95] text-black md:text-7xl ${quicksand.className}`}
           >
-            Eat and
-            <br />
-            Drink.
+            {sectionCopy.heading.map((line: string, i: number) => (
+              <span key={i}>
+                {line}
+                {i < sectionCopy.heading.length - 1 && <br />}
+              </span>
+            ))}
           </h2>
 
           <div className="mt-4 h-[3px] w-20 sm:w-24 rounded-full bg-gradient-to-r from-[#CC4125] via-[#20B2AA] to-transparent" />
 
           <p className={`mt-5 sm:mt-6 text-xl sm:text-2xl leading-relaxed text-black/60 ${caveat.className}`}>
-            Discover premium dining destinations, social venues,
-            networking lounges, and curated culinary experiences
-            designed around the energy of Funinfate.
+            {sectionCopy.intro}
           </p>
         </div>
 
